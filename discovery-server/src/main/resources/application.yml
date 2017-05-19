@@ -1,0 +1,46 @@
+#应用配置
+############# master ################
+spring:
+  profiles:
+    active: master
+############# slave ################
+#spring:
+#  profiles:
+#    active: slave
+#acturator info
+info:
+  component: Discovery Server ${spring.profiles.active}
+#多台服务统一配置,然后启动不同的profile即可,目前为2台
+--- #分割配置
+spring:
+  profiles: master
+server:
+  port: 8761
+peer:
+  server:
+    port: 8762 #slave的端口
+    hostname: 127.0.0.1 #slave 主机
+eureka:
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: http://${peer.server.hostname}:${peer.server.port}/eureka/ # /不能省略
+#多台服务统一配置,然后启动不同的profile即可,目前为2台
+---
+spring:
+  profiles: slave
+server:
+  port: 8762
+peer:
+  server:
+    port: 8761 #master端口
+    hostname: 127.0.0.1 #master主机
+eureka:
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: http://${peer.server.hostname}:${peer.server.port}/eureka/

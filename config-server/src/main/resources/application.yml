@@ -1,0 +1,58 @@
+############# master ################
+spring:
+  profiles:
+    active: master
+############# slave ################
+#spring:
+#  profiles:
+#    active: slave
+
+info:
+  component: Config Server ${spring.cloud.config.server.git.default-label}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka/,http://127.0.0.1:8762/eureka/ # 加入服务发现
+  instance:
+    prefer-ip-address: true
+########### 目录结构 ###########
+#/{app}/{profile}
+#/{app}/{profile}/{label}
+#/{app}/{profiels}{label}/{path}
+########### cluster master ############
+---
+server:
+  port: 8888
+peer:
+  server:
+    port: 8889 #slave的端口
+    hostname: 127.0.0.1 #slave 主机
+spring:
+  profiles: master
+  config:
+    name: configserver # 必须使用这个,要去jar包加载configserver.yml
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/FansinZhao/config-repo
+          default-label: master
+########### cluster slave ############
+---
+server:
+  port: 8889
+peer:
+  server:
+    port: 8888 #slave的端口
+    hostname: 127.0.0.1 #slave 主机
+spring:
+  profiles: slave
+  config:
+    name: configserver # 必须使用这个,要去jar包加载configserver.yml
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/FansinZhao/config-repo # 可以设置多个备份源
+          default-label: slave

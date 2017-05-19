@@ -1,0 +1,10 @@
+#系统设置
+############# master ################
+spring:
+  application:
+    name: discovery-eureka-server-master #多个服务分布式集群时修改不同名称
+############# slave ################
+#spring:
+#  application:
+#    name: discovery-eureka-server-slave #多个服务分布式集群时修改不同名称
+
