@@ -41,7 +41,3 @@ spring-cloud-application-a: #本应用名称
 # 用户配置信息 配置调用服务接口
 ServiceId:
   RibbonController: spring-cloud-application-a
-
-spring-cloud-application-a:
-  ribbon:
-    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
