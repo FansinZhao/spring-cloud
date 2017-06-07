@@ -23,7 +23,7 @@ eureka:
 ########### cluster master ############
 ---
 server:
-  port: 8888
+  port: 8890
 peer:
   server:
     port: 8889 #slave的端口
@@ -31,7 +31,7 @@ peer:
 spring:
   profiles: master
   config:
-    name: configserver # 必须使用这个,要去jar包加载configserver.yml
+    name: configserver # 默认名称,注意客户端指定自定义,要去jar包加载configserver.yml
   cloud:
     config:
       server:

@@ -1,12 +1,3 @@
-# 配置config中心
-spring:
-  application:
-    name: spring-cloud-application-a
-  cloud:
-    config:
-      uri: http://127.0.0.1:8888,http://127.0.0.1:8889
-#      enabled: false
-
 ######### 从配置中心读取,如果读取成功则替换,否则采用下面默认配置 ###########
 info:
   component: Application Server ${spring.application.name}
