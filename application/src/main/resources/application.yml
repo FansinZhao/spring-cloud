@@ -20,7 +20,7 @@ management:
 #loadbalance 算法
 #1  BestAvailableRule：最小并发
 #2  ZoneAvoidanceRule：性能和可用性最优
-#3  AvailabilityFilteringRule：去除熔断失败和高并发，使用 RoundRobinRule 轮询选择
+#3  AvailabilityFilteringRule：默认算法 去除熔断失败和高并发，使用 RoundRobinRule 轮询选择
 #4  RoundRobinRule：轮询
 #5  WeightedResponseTimeRule：响应时间最小
 #6  !ResponseTimeWeightedRule：废弃，使用WeightedResponseTimeRule

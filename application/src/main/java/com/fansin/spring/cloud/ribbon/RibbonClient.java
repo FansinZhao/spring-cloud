@@ -6,10 +6,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
@@ -56,7 +53,6 @@ public class RibbonClient implements InitializingBean,DisposableBean{
             //保存到cache
             uriCache.putIfAbsent(serviceId+service,uri);
         }
-
         logger.info("serviceId = [" + serviceId + "], service = [" + service + "]");
         String result = restTemplate.getForObject(uri+service,String.class,uriVariables);
         return result;
@@ -75,12 +71,3 @@ public class RibbonClient implements InitializingBean,DisposableBean{
     }
 }
 
-@Configuration
-class RestTemplateConfiguration {
-
-    @LoadBalanced
-    @Bean
-    RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-}
