@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
 import java.net.URI;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -54,7 +55,7 @@ public class RibbonClient implements InitializingBean,DisposableBean{
             uriCache.putIfAbsent(serviceId+service,uri);
         }
         logger.info("serviceId = [" + serviceId + "], service = [" + service + "]");
-        String result = restTemplate.getForObject(uri+service,String.class,uriVariables);
+        String result = restTemplate.getForObject(uri+ File.separator+service,String.class,uriVariables);
         return result;
     }
 

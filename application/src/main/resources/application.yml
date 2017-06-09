@@ -29,7 +29,14 @@ management:
 spring-cloud-application-a: #本应用名称
   ribbon:
     NFLoadBalancerRuleClassName: com.netflix.loadbalancer.AvailabilityFilteringRule #默认
-
+#hystrix 配置
+hystrix:
+  metrics:
+    enabled: true
+    polling-interval-ms: 2000
+  dashboard:
+    enable-ignore-connection-close-header: false
 # 用户配置信息 配置调用服务接口
 ServiceId:
   RibbonController: spring-cloud-application-a
+

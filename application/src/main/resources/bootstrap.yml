@@ -5,7 +5,7 @@ spring:
   cloud:
     config:
 #     开关
-      enabled: true
+      enabled: false
       username: ~
       password: ~
 #      手动制定
@@ -13,7 +13,7 @@ spring:
 #
 #     使用eureka自动发现config服务,推荐使用!可以实现 configserver 集群
       discovery:
-        enabled: true
+        enabled: false
 #       默认名称
         service-id: configserver
 #     默认false ,设置为true时,连接不到config将停止服务

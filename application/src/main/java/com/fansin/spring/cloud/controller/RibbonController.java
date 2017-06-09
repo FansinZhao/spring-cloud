@@ -1,6 +1,6 @@
 package com.fansin.spring.cloud.controller;
 
-import com.fansin.spring.cloud.ribbon.RibbonClient;
+import com.fansin.spring.cloud.hystrix.CircuitBreakerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +18,11 @@ public class RibbonController {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    private RibbonClient ribbonClient;
-
     @Value("${ServiceId.RibbonController}")
     private String serviceId;
+
+    @Autowired
+    private CircuitBreakerService circuitBreakerService;
 
 
     @RequestMapping("/")
@@ -32,11 +32,12 @@ public class RibbonController {
 
     @RequestMapping("/doService/{service}")
     public String doService(@PathVariable String service){
-        return ribbonClient.invokeForString(serviceId,service);
+        return circuitBreakerService.invokeRemoteService(serviceId,service);
     }
 
     @RequestMapping("/service")
     public String service(){
+
         return ">>>>>>>>RibbonController.service<<<<<<<<";
     }
 
