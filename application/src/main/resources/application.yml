@@ -8,8 +8,10 @@ eureka:
   client:
     service-url:
       defaultZone: http://127.0.0.1:8761/eureka/,http://127.0.0.1:8762/eureka/
-  instance:
-    prefer-ip-address: true
+#   客户端请求时间
+    registry-fetch-interval-seconds: 5
+
+
 # 应用管理
 management:
   health:
@@ -29,6 +31,20 @@ management:
 spring-cloud-application-a: #本应用名称
   ribbon:
     NFLoadBalancerRuleClassName: com.netflix.loadbalancer.AvailabilityFilteringRule #默认
+# ribbon 设置是否立马加载
+ribbon:
+  eager-load:
+    enabled: true
+    clients: spring-cloud-application-a
+#  feign 配置文件
+feign:
+  compression:
+    request:
+      mime-types:
+      - "text/xml"
+      - "application/xml"
+      - "application/json"
+      min-request-size: 2048
 #hystrix 配置
 hystrix:
   metrics:
@@ -39,4 +55,12 @@ hystrix:
 # 用户配置信息 配置调用服务接口
 ServiceId:
   RibbonController: spring-cloud-application-a
-
+  FeignController: ${ServiceId.RibbonController}
+#  logger 日志配置
+debug: false # true时输出更多
+logging:
+  file: logs/spring-cloud-application-a.log
+  level:
+    org.springframework.boot: info
+    com.fansin.spring.cloud: debug
+    com.netflix.discovery.DiscoveryClient: off

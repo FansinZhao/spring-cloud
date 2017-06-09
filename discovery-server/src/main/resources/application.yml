@@ -24,9 +24,19 @@ eureka:
   instance:
     hostname: localhost
     prefer-ip-address: true
+#   期待下次心跳
+    lease-expiration-duration-in-seconds: 60
+#   超时移除客户端
+    lease-renewal-interval-in-seconds: 30
+
   client:
     serviceUrl:
-      defaultZone: http://${peer.server.hostname}:${peer.server.port}/eureka/ # /不能省略
+      defaultZone: http://${peer.server.hostname}:${peer.server.port}/eureka/ # 带目录
+  server:
+#   网络中断后自我保护
+    enable-self-preservation: true
+#   清理无效节点
+    eviction-interval-timer-in-ms: 60
 #多台服务统一配置,然后启动不同的profile即可,目前为2台
 ---
 spring:
