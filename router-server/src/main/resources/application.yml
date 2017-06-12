@@ -1,0 +1,52 @@
+######### 从配置中心读取,如果读取成功则替换,否则采用下面默认配置 ###########
+info:
+  component: Application Server ${spring.application.name}
+# 加入服务发现
+server:
+  port: 9011 # 与从config中心拿到的端口信息不同
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka/,http://127.0.0.1:8762/eureka/
+#   客户端请求时间
+    registry-fetch-interval-seconds: 5
+# zuul 配置
+zuul:
+  host:
+#   最大代理数
+    max-total-connections: 200
+#   每个路由最大连接数
+    max-per-route-connections: 20
+# 隔离级别
+  ribbon-isolation-strategy: semaphore
+  ignored-services: '*'
+# 忽略本地service
+  ignore-local-service: true
+# 忽略匹配模式
+  ignored-patterns: /**/ignore/**
+  routes:
+#   ** 表示目录下所有子目录
+    first:
+      path: /first/**
+      serviceId: spring-cloud-application-a
+    second:
+      path: /second/**
+      serviceId: spring-cloud-application-a
+    legacy:
+      path: /**
+# 自动去掉前缀,如/first/101跳转到/101
+  strip-prefix: true
+# 是否添加前缀
+  add-proxy-headers: true
+# 关闭有利于节省带宽
+  add-host-header: false
+# ssl
+  ssl-hostname-validation-enabled: true
+# 敏感信息设置
+  sensitive-headers: Cookie,Set-Cookie,Authorization
+# SimpleHostRoutingFilter 可以使用getQueryString
+  force-original-query-string-encoding: false
+# disable filter
+  SimpleHostRoutingFilter:
+    post:
+      disable: true
