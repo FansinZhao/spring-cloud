@@ -7,8 +7,6 @@ import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 
 @SpringBootApplication
-@EnableHystrix
-@EnableDiscoveryClient
 @EnableZuulProxy
 public class RouterApplication {
 

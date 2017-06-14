@@ -21,7 +21,7 @@ zuul:
   ribbon-isolation-strategy: semaphore
   ignored-services: '*'
 # 忽略本地service
-  ignore-local-service: true
+  ignore-local-service: false
 # 忽略匹配模式
   ignored-patterns: /**/ignore/**
   routes:
@@ -32,8 +32,12 @@ zuul:
     second:
       path: /second/**
       serviceId: spring-cloud-application-a
+    fallback:
+      path: /fallback/**
+      serviceId: fallback # 不存在的id
     legacy:
       path: /**
+      url: forward:/
 # 自动去掉前缀,如/first/101跳转到/101
   strip-prefix: true
 # 是否添加前缀
