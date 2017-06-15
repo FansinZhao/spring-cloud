@@ -19,6 +19,8 @@ zuul:
     max-per-route-connections: 20
 # 隔离级别
   ribbon-isolation-strategy: semaphore
+  semaphore:
+    max-semaphores: 100
   ignored-services: '*'
 # 忽略本地service
   ignore-local-service: false
