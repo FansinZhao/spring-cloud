@@ -21,8 +21,9 @@
 	<modules>
 		<module>config-server</module>
 		<module>discovery-server</module>
-		<module>application</module>
 		<module>router-server</module>
+		<module>application</module>
+		<module>stream-application</module>
 	</modules>
 
 	<properties>

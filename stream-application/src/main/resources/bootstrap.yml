@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: stream-application
+# 根据官方文档说明,配置config中心必须配置在bootstrap.yml
+  cloud:
+    config:
+#     开关
+      enabled: false
+      username: ~
+      password: ~
+#      手动制定
+#      uri: http://127.0.0.1:8888
+#
+#     使用eureka自动发现config服务,推荐使用!可以实现 configserver 集群
+      discovery:
+        enabled: false
+#       默认名称
+        service-id: configserver
+#     默认false ,设置为true时,连接不到config将停止服务
+      fail-fast: true
+      retry:
+#       默认重试6次,还有其他重试设置
+        max-attempts: 6
+#      指定不同的配置文件
+#     label:
+#心跳检测
+health:
+  config:
+    enabled: true
+#   默认为5min
+#    time-to-live: 300000
