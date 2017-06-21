@@ -10,6 +10,7 @@ eureka:
       defaultZone: http://127.0.0.1:8761/eureka/,http://127.0.0.1:8762/eureka/
 #   客户端请求时间
     registry-fetch-interval-seconds: 5
+    enabled: false
 spring:
   rabbitmq:
     addresses: 172.17.0.3
@@ -17,3 +18,20 @@ spring:
     listener:
       simple:
         acknowledge-mode: auto
+    username: user
+    password: password
+  cloud:
+    stream:
+      bindings:
+        error:
+          destination: message-errors
+        appInput:
+#         制定exchange
+          destination: raw-sensor-data
+#     分组为raw-sensor-data下 group-average
+      raw-sensor-data:
+        group: average
+# stream 用户配置
+stream-binding-hello: hello
+
+
