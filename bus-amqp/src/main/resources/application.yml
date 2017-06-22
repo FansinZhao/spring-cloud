@@ -13,6 +13,14 @@ eureka:
 #   客户端请求时间
     registry-fetch-interval-seconds: 5
     enabled: false
+############### 日志  ###############
+debug: false # true时输出更多
+logging:
+  file: logs/spring-cloud-bus-amqp.log
+  level:
+    org.springframework.boot: info
+    com.fansin.spring.cloud: debug
+    com.netflix.discovery.DiscoveryClient: off
 ---
 server:
   port: 8013 # 与从config中心拿到的端口信息不同

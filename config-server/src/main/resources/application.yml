@@ -16,6 +16,13 @@ eureka:
       defaultZone: http://127.0.0.1:8761/eureka/,http://127.0.0.1:8762/eureka/ # 加入服务发现
   instance:
     prefer-ip-address: true
+############### 日志  ###############
+logging:
+  file: logs/spring-cloud-config-server.log
+  level:
+    org.springframework.boot: info
+    com.fansin.spring.cloud: debug
+    com.netflix.discovery.DiscoveryClient: off
 ########### 目录结构 ###########
 #/{app}/{profile}
 #/{app}/{profile}/{label}

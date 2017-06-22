@@ -24,6 +24,7 @@
 		<module>router-server</module>
 		<module>application</module>
 		<module>stream-application</module>
+		<module>bus-amqp</module>
 	</modules>
 
 	<properties>

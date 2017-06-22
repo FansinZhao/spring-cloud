@@ -56,7 +56,7 @@ hystrix:
 ServiceId:
   RibbonController: spring-cloud-application-a
   FeignController: ${ServiceId.RibbonController}
-#  logger 日志配置
+############### 日志  ###############
 debug: false # true时输出更多
 logging:
   file: logs/spring-cloud-application-a.log
