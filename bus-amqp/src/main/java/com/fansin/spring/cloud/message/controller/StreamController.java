@@ -15,7 +15,7 @@ public class StreamController {
 
 
     @Autowired
-    Processor processor;
+    private Processor processor;
 
 
     @RequestMapping("/")
@@ -25,7 +25,7 @@ public class StreamController {
 
     @RequestMapping("/send/{msg}")
     public String sendMsg(@PathVariable String msg){
-        processor.output().send(MessageBuilder.withPayload(msg.getBytes()).build());
-        return "发送消息:"+msg + " "+ System.currentTimeMillis();
+        boolean result = processor.output().send(MessageBuilder.withPayload(msg).build());
+        return result+" 发送消息:"+msg + " "+ System.currentTimeMillis();
     }
 }

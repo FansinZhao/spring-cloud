@@ -1,9 +1,11 @@
+####### producer/customer ######
+spring:
+  profiles:
+    active: producer
 ######### 从配置中心读取,如果读取成功则替换,否则采用下面默认配置 ###########
 info:
   component: Application Server ${spring.application.name}
 # 加入服务发现
-server:
-  port: 8013 # 与从config中心拿到的端口信息不同
 eureka:
   client:
     service-url:
@@ -11,7 +13,11 @@ eureka:
 #   客户端请求时间
     registry-fetch-interval-seconds: 5
     enabled: false
+---
+server:
+  port: 8013 # 与从config中心拿到的端口信息不同
 spring:
+  profiles: producer
   rabbitmq:
 #   单机
 #    host: 172.17.0.3
@@ -100,7 +106,7 @@ spring:
         enabled: true
     stream:
 #      default-binder: rabbit-binder
-      instance-count: 1
+      instance-count: 2
       instance-index: 0
 #     bindings 可以配置binder下的customer/producer属性
       bindings:
@@ -110,7 +116,6 @@ spring:
             output:
 #             制定exchange
               destination: bus-amqp
-              group: bus-output
 #              contentType: "application/json"
               contentType: "text/plain"
 #              binder: rabbit-binder
@@ -120,7 +125,115 @@ spring:
 #                partitionKeyExpression: payload.id
                 headerMode: embeddedHeaders
                 useNativeEncoding: false
-#           分组为raw-sensor-data下 group-average
+#      binders:
+#        rabbit-binder:
+#          type: rabbit # or kafka
+#          在上面已经配置了,可以制定不同的rabbit
+#          environment:
+#            spring:
+#             rabbit:
+#              host: 172.17.0.3
+#              port: 5672
+#              通用用户名/密码
+#              username: user
+#              password: password
+---
+server:
+  port: 8014 # 与从config中心拿到的端口信息不同
+spring:
+  profiles: customer
+  rabbitmq:
+#   单机
+#    host: 172.17.0.3
+#    port: 5672
+#    通用用户名/密码
+#    username: user
+#    password: password
+#   集群设置,用','分割
+    addresses: user:password@172.17.0.3:5672
+    listener:
+#     简单
+      simple:
+        acknowledge-mode: auto
+        auto-startup: true
+#       并发数
+        concurrency: 10
+#        最大并发
+        max-concurrency: 200
+#       单次消息数,>=transaction-size
+        prefetch: 10
+#       事务处理的交易数量
+        transaction-size: 10
+#       是否丢弃消息
+        default-requeue-rejected: false
+#       空闲心跳
+        idle-event-interval: 3000
+#       重试相关
+        retry:
+          enabled: true
+          initial-interval: 1000
+          max-attempts: 3
+          max-interval: 10000
+          stateless: true
+#         重试间隔乘数
+          multiplier: 1
+    cache:
+      connection:
+        mode: channel
+#       mode:connection时connection数量
+#        size: 20
+      channel:
+#       缓存满了,等待时间
+        checkout-timeout: 15000
+#       缓存的channel数量
+        size: 20
+#   消息确认,解决性能问题,对方为自己发送的消息确认
+    publisher-confirms: false
+#   为接收的消息进行消息确认,配合消息确认
+    publisher-returns: false
+#   显示虚拟主机
+    virtual-host:
+#   ssl相关的,跟spring boot配置类似,不在赘述
+    ssl:
+      enabled: false
+#   0 没有心跳超时 s
+    requested-heartbeat: 5
+#   5s
+    connection-timeout: 5
+#
+    template:
+#     强制消息
+      mandatory: false
+#     异步 超时时间 一天
+      receive-timeout: 86400
+#     同步超时时间
+      reply-timeout: 5
+      retry:
+        enabled: true
+        initial-interval: 1000
+        max-interval: 10000
+        max-attempts: 3
+        multiplier: 1
+  cloud:
+    bus:
+      enabled: true
+      ack:
+        enabled: true
+        # null 表示所有
+        destination-service:
+      destination: springCloudBus
+      env:
+        enabled: true
+      refresh:
+        enabled: true
+      trace:
+        enabled: true
+    stream:
+#      default-binder: rabbit-binder
+      instance-count: 2
+      instance-index: 1
+#     bindings 可以配置binder下的customer/producer属性
+      bindings:
 #           使用sink 消费者
             input:
               destination: bus-amqp
@@ -130,7 +243,7 @@ spring:
 #              binder: rabbit-binder
               consumer:
                 concurrency: 1
-                partitioned: true
+                partitioned: false
                 maxAttempts: 3
                 backOffInitialInterval: 1000
                 backOffMaxInterval: 10000
@@ -152,4 +265,3 @@ spring:
 #              通用用户名/密码
 #              username: user
 #              password: password
-
