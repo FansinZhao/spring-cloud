@@ -1,9 +1,7 @@
-package com.fansin.spring.cloud.message;
+package com.fansin.spring.cloud.amqp.message;
 
-import com.fansin.spring.cloud.pojo.SinkMessage;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.messaging.Processor;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Component;
 
 

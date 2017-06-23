@@ -1,4 +1,4 @@
-package com.fansin.spring.cloud.pojo;
+package com.fansin.spring.cloud.amqp.pojo;
 
 /**
  * Created by zhaofeng on 17-6-22.

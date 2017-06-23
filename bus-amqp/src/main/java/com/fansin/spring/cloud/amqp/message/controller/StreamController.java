@@ -1,4 +1,4 @@
-package com.fansin.spring.cloud.message.controller;
+package com.fansin.spring.cloud.amqp.message.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.messaging.Processor;
