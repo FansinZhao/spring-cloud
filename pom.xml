@@ -23,8 +23,8 @@
 		<module>discovery-server</module>
 		<module>router-server</module>
 		<module>application</module>
-		<module>stream-application</module>
 		<module>bus-amqp</module>
+		<module>bus-kafka</module>
 	</modules>
 
 	<properties>
