@@ -35,7 +35,7 @@ spring-cloud-application-a: #本应用名称
 ribbon:
   eager-load:
     enabled: true
-    clients: spring-cloud-application-a
+    clients: ${spring.application.name}
 #  feign 配置文件
 feign:
   compression:
@@ -59,8 +59,7 @@ ServiceId:
 ############### 日志  ###############
 debug: false # true时输出更多
 logging:
-  file: logs/spring-cloud-application-a.log
+  file: logs/${spring.application.name}.log
   level:
     org.springframework.boot: info
     com.fansin.spring.cloud: debug
-    com.netflix.discovery.DiscoveryClient: off

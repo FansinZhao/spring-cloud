@@ -18,11 +18,10 @@ eureka:
     prefer-ip-address: true
 ############### 日志  ###############
 logging:
-  file: logs/spring-cloud-config-server.log
+  file: logs/${spring.application.name}.log
   level:
     org.springframework.boot: info
     com.fansin.spring.cloud: debug
-    com.netflix.discovery.DiscoveryClient: off
 ########### 目录结构 ###########
 #/{app}/{profile}
 #/{app}/{profile}/{label}

@@ -12,11 +12,10 @@ info:
   component: Discovery Server ${spring.profiles.active}
 ############### 日志  ###############
 logging:
-  file: logs/spring-cloud-discovery-server.log
+  file: logs/${spring.application.name}.log
   level:
     org.springframework.boot: info
     com.fansin.spring.cloud: debug
-    com.netflix.discovery.DiscoveryClient: off
 #多台服务统一配置,然后启动不同的profile即可,目前为2台
 --- #分割配置
 spring:
