@@ -1,0 +1,200 @@
+####### producer/customer ######
+spring:
+  profiles:
+    active: producer
+######### 从配置中心读取,如果读取成功则替换,否则采用下面默认配置 ###########
+info:
+  component: Application Server ${spring.application.name}
+# 加入服务发现
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka/,http://127.0.0.1:8762/eureka/
+#   客户端请求时间
+    registry-fetch-interval-seconds: 5
+    enabled: false
+############### 日志  ###############
+debug: true # true时输出更多
+logging:
+  file: logs/${spring.application.name}.log
+  level:
+    org.springframework.boot: info
+    com.fansin.spring.cloud: debug
+#    com.netflix.discovery.DiscoveryClient: off
+---
+server:
+  port: 8015 # 与从config中心拿到的端口信息不同
+spring:
+  profiles: producer
+  kafka:
+    listener:
+#      record 立即确认
+#      batch 下次轮询前确认
+#      time 在超过ack-time后确认
+#      count 在超过ack-count个数后确认
+#      count_time 在超过ack-time后确认 或 在超过ack-count个数后确认
+#      manual 用户通过使用AcknowledgingMessageListener进行人工确认
+#      manual_immediate 用户使用AcknowledgingMessageListener 在消费者唤醒后立即确认
+      ack-mode: count_time
+#     下面的至于在  count_time 和 time 模式下面有效果
+      ack-count: 20
+      ack-time: 1000
+#     并发 提高性能
+      concurrency: 1
+#     轮询超时时间
+      poll-timeout: 1000
+    producer:
+#      在binder中设置
+#      bootstrap-servers: 172.17.0.3:9092
+      client-id: bus-kafka-producer
+#     最小确认数
+      acks: 1
+#     批量发送数 提高性能
+      batch-size: 1
+#     发送缓存区大小8M
+      buffer-memory: 8096
+#     none,gzip,snappy
+      compression-type: snappy
+#     重试次数
+      retries: 3
+#     序列化器 默认是字符串序列化器 目前最好的序列化工具是 protobuf --> [java版本] protostuff
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+  cloud:
+    bus:
+      enabled: true
+      ack:
+        enabled: true
+        # null 表示所有
+        destination-service:
+      destination: springCloudBus
+      env:
+        enabled: true
+      refresh:
+        enabled: true
+      trace:
+        enabled: true
+    stream:
+      kafka:
+        binder:
+#         更多配置详见 KafkaBinderConfigurationProperties
+          zk-nodes: 127.0.0.1
+          default-zk-port: 2181
+          brokers: 127.0.0.1
+          default-broker-port: 9092
+          auto-create-topics: true
+          auto-add-partitions: true
+#      default-binder: rabbit-binder
+      instance-count: 1
+      instance-index: 0
+#     bindings 可以配置binder下的customer/producer属性
+      bindings:
+#            error:
+#              destination: message-errors
+#           使用Source 生产者
+            output:
+#             制定exchange
+              destination: bus-kafka
+#              content-type: "application/json"
+              content-type: "text/plain"
+#              binder: rabbit-binder
+              producer:
+                partition-count: 1
+#               根据负载分区 需要自己传入id属性
+#                partitionKeyExpression: payload.id
+#               embedHeaders 会将header加入到payload中
+                header-mode: raw
+                useNative-encoding: false
+---
+server:
+  port: 8016 # 与从config中心拿到的端口信息不同
+spring:
+  profiles: customer
+  kafka:
+    listener:
+  #      record 立即确认
+  #      batch 下次轮询前确认
+  #      time 在超过ack-time后确认
+  #      count 在超过ack-count个数后确认
+  #      count_time 在超过ack-time后确认 或 在超过ack-count个数后确认
+  #      manual 用户通过使用AcknowledgingMessageListener进行人工确认
+  #      manual_immediate 用户使用AcknowledgingMessageListener 在消费者唤醒后立即确认
+      ack-mode: count_time
+  #     下面的至于在  count_time 和 time 模式下面有效果
+      ack-count: 20
+      ack-time: 3000
+  #     并发 提高性能
+      concurrency: 1
+  #     轮询超时时间
+      poll-timeout: 5000
+    consumer:
+#      在binder中设置
+#      bootstrap-servers: 127.0.0.1:9092
+      client-id: bus-kafka-customer
+      group-id: bus-kafka-customer-0
+#     true 定期提交
+      enable-auto-commit: true
+      auto-commit-interval: 5000
+#     心跳时间
+      heartbeat-interval: 3000
+#     none 从原来的位置继续消费消息,如果没有消费过,抛出异常 类似spring的事务 propagation_mandatory -- 尝试继续,不稳定
+#     earliest 重新消费所有消息 -- 最安全,最慢,有重复数据问题,需要实现幂等性保证事务一致
+#     latest 只消费最新消息 -- 数据丢失,最快,需要做事务完整性检查
+#     exception 不支持重新消费 -- 无作为
+      auto-offset-reset: latest
+#     一次轮询获取的消息数 根据性能设置
+      max-poll-records: 200
+#     最小获取数据块大小 字节
+      fetch-min-size: 32
+#     获取fetch-min-size最大等待时间
+      fetch-max-wait: 15000
+#     反序列化器 默认是字符串反序列化器 目前最好的序列化工具是 protobuf --> [java版本] protostuff
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  cloud:
+    bus:
+      enabled: true
+      ack:
+        enabled: true
+        # null 表示所有
+        destination-service:
+      destination: springCloudBus
+      env:
+        enabled: true
+      refresh:
+        enabled: true
+      trace:
+        enabled: true
+    stream:
+      kafka:
+        binder:
+#         更多配置详见 KafkaBinderConfigurationProperties
+          zk-nodes: 127.0.0.1
+          default-zk-port: 2181
+          brokers: 127.0.0.1
+          default-broker-port: 9092
+#     default-binder: rabbit-binder
+      instance-count: 1
+      instance-index: 0
+#     bindings 可以配置binder下的customer/producer属性
+      bindings:
+#           使用sink 消费者
+            input:
+              destination: bus-kafka
+              group: bus-input
+#              content-type: "application/json"
+              content-type: "text/plain"
+#              binder: rabbit-binder
+              consumer:
+                concurrency: 1
+                partitioned: false
+                max-attempts: 3
+                back-off-initial-interval: 1000
+                back-off-max-interval: 10000
+                back-off-multiplier: 2.0
+#               embedHeaders 会将header加入到payload中
+                header-mode: raw
+#               实例总数 注意配置适当的实例和索引
+                instance-count: 1
+#               索引 不要重复
+                instance-index: 0
