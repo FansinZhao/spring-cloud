@@ -20,6 +20,11 @@ logging:
   level:
     org.springframework.boot: info
     com.fansin.spring.cloud: debug
+management:
+  security:
+    enabled: false
+bus:
+  key: 111
 ---
 server:
   port: 8013 # 与从config中心拿到的端口信息不同
