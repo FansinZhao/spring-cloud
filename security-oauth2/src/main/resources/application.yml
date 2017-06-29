@@ -23,7 +23,7 @@ eureka:
     service-url:
       defaultZone: http://127.0.0.1:8761/eureka/,http://127.0.0.1:8762/eureka/
 #   客户端请求时间
-    registry-fetch-interval-seconds: 5security
+    registry-fetch-interval-seconds: 5
 ############### 日志  ###############
 logging:
   file: logs/${spring.application.name}.log
