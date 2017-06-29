@@ -25,6 +25,7 @@
 		<module>application</module>
 		<module>bus-amqp</module>
 		<module>bus-kafka</module>
+		<module>security-oauth2</module>
 	</modules>
 
 	<properties>
