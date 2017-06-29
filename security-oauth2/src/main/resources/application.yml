@@ -1,0 +1,166 @@
+############### server/client  ###############
+spring:
+  profiles:
+    active: server
+    thymeleaf:
+      cache: true
+      enabled: true
+      encoding: UTF-8
+      mode: HTML5
+      prefix: classpath:/templates/
+      suffix: .html
+      content-type: text/html
+    resources:
+      static-locations: classpath:/static/
+    mvc:
+      static-path-pattern: /static/**
+######### 从配置中心读取,如果读取成功则替换,否则采用下面默认配置 ###########
+info:
+  component: Application Server ${spring.application.name}
+# 加入服务发现
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka/,http://127.0.0.1:8762/eureka/
+#   客户端请求时间
+    registry-fetch-interval-seconds: 5security
+############### 日志  ###############
+logging:
+  file: logs/${spring.application.name}.log
+  level:
+    org.springframework.boot: info
+    com.fansin.spring.cloud: debug
+##################################
+########### spring security ##############
+security:
+  basic:
+#   是否开启
+    enabled: true
+    authorize-mode: authenticated
+    path: "/**"
+    realm: Spring
+  require-ssl: false
+  sessions: stateless
+# 登录要输入用户名/密码
+  user:
+    name: admin
+    password: admin
+    role: ADMIN
+# 跨站请求伪造校验
+  enable-csrf: false
+  headers:
+#   跨站脚本攻击校验
+    xss: true
+    cache: true
+#   是否可以使用<frame>
+    frame: false
+#   http 重定向 https
+    hsts: all
+#   X-Content-Type-Options "text/html" "image/png" "text/css" "text/plain"
+    content-type: true
+#   default 执行限制 report_only 不执行限制
+    content-security-policy-mode: default
+#   src 只能从当前域名获取
+    content-security-policy: default-src 'self'
+# 不加密url
+  ignored: /ignore1,/ignore2
+  filter-order: 1
+# 详看 DispatcherType
+  filter-dispatcher-types: REQUEST
+#########################
+## authority server
+---
+server:
+  port: 9012 # 与从config中心拿到的端口信息不同
+spring:
+  profiles: server
+security:
+########### oauth2 ##############
+  oauth2:
+#   单点登录
+    sso:
+      login-path: /login
+#     可以实现WebSecurityConfigurerAdapter,需要在META-INF/spring.factories指定配置
+      filter-order: 0
+#   详看 AuthorizationEndpoint
+    authorization:
+      realm: Spring
+#     默认 denyAll
+#     更多详看 AuthorizedUrl
+#     permitAll 允许所有,denyAll 拒绝所有,anonymous 允许匿名用户,authenticated 身份验证用户,fullyAuthenticated 身份验证-永久,rememberMe 永久
+#     hasAnyRole(String... authorities) [ADMIN*,...]是否有一组用户角色
+#     hasRole(String role) 是否有ADMIN*用户角色
+#     hasAuthority(String authority) 是否有权限ROLE_*
+#     hasAnyAuthority(String... authorities) 是否有一组权限[ROLE_*...]
+#     hasIpAddress(String ipAddressExpression) 限制ip或ip组 192.168.128/192.168.0/24
+      check-token-access: authenticated
+#     默认 denyAll
+#      token-key-access: isAuthenticated()
+    resource:
+      filter-order: 0
+      id: oauth2-resource-id
+#     Json web token 一般被用来在身份提供者和服务提供者间传递被认证的用户身份信息，以便于从资源服务器获取资源.
+#     可以使用key-uri或者key-value
+      jwt:
+#        key-uri: http://127.0.0.1:9012/jwt/keyValue
+#
+        key-value:
+          -----BEGIN PUBLIC KEY-----
+          MCQwDQYJKoZIhvcNAQEBBQADEwAwEAIJANBlWenhG09lAgMBAAE=
+          -----END PUBLIC KEY-----
+#     Json web key 一个代表加密密钥的JavaScript对象表示法（JSON）数据结构.
+#      jwk:
+#       通过uri获取信息校验key-value
+#        key-set-uri: http://127.0.0.1:9012/jwk/keySet
+#     当设置为false时,使用 user-info-uri
+      prefer-token-info: true
+#     获取user-info的uri
+      user-info-uri: http://127.0.0.1:9012/user
+      service-id: oauth2-resource-service-id
+#     Bearer 默认 可以使用Access Token 和 Resource Owner ,OAuth2 只能使用 Resource Owner
+#      token-type: bearer # 没有生效?
+#     解码uri
+#      token-info-uri: http://127.0.0.1:9012/token/decoding
+#   详看  AbstractRedirectResourceDetails/BaseOAuthProtectedResourceDetails
+#   默认配置 OAuth2AuthorizationServerConfiguration
+    client:
+      id: oauth2-id
+#     如果不设置,则采用随机id
+      client-id: oauth2-client-id
+      client-secret: secret
+#     refresh_token
+#     authorization_code 用验证获取code，再用code去获取token,
+#     implicit 隐式授权模式,
+#     password
+#     client_credentials 用來取得 App Access Token
+############################## client_credentials,refresh_token,authorization_code,implicit,password ############################
+      authorized-grant-types: client_credentials,refresh_token,authorization_code,implicit,password
+#     ? SimpleGrantedAuthority role
+#      authorities: ROLE_CLIENT,ROLE_TRUSTED_CLIENT
+      scope: read
+#     OAuth2AccessToken
+#
+      user-authorization-uri: http://127.0.0.1:9012/oauth/authorize
+      token-name: oauth_token
+#     重定向到获取access token
+      access-token-uri: http://127.0.0.1:9012/oauth/token
+      access-token-validity-seconds: 60
+      refresh-token-validity-seconds: 60
+#     默认 unsupported
+      grant-type: client_credentials,refresh_token,authorization_code,implicit,password
+#
+#      additional-information:
+#        key1: value1
+#        key2: value2
+      resource-ids: oauth2-resource-id
+      authentication-scheme: header
+      client-authentication-scheme: header
+      auto-approve-scopes: '.*'
+#     redirect uri
+      use-current-uri: true
+#     use-current-uri false 才使用 pre-established-redirect-uri
+#      pre-established-redirect-uri: http://127.0.0.1:9012/welcome
+#     注册uri
+#      registered-redirect-uri: http://127.0.0.1:9012/registered
+####################  oauth2  ######################
+
