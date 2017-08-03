@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.Lock;
 
@@ -17,12 +19,15 @@ public class HeadersExchange {
     private static final String HEADERS = "headers";
     private static final String HEADERS_QUEUE = "headers_queue";
 
-    private static CountDownLatch latch = new CountDownLatch(1);
+    private static CountDownLatch latch = new CountDownLatch(3);
 
     public static void main(String[] args) throws InterruptedException {
-        new Thread(new HeadersConsumer("consumer")).start();
+        ExecutorService service = Executors.newFixedThreadPool(4);
+        service.execute(new HeadersConsumer("consumer all"));
+        service.execute(new HeadersConsumer("consumer any1"));
+        service.execute(new HeadersConsumer("consumer any2"));
         latch.await();
-        new Thread(new HeadersPublisher("publisher")).start();
+        service.execute(new HeadersPublisher("publisher"));
     }
 
 
@@ -54,8 +59,8 @@ public class HeadersExchange {
                 Channel channel = connection.createChannel();
                 channel.exchangeDeclare(HEADERS, ExchangeTypes.HEADERS);
                 Map<String,Object> headers = new HashMap<>();
-                headers.put("key1","key1");
-                headers.put("key2","key2");
+                headers.put("name","张三");
+                headers.put("phone","123456789");
                 AMQP.BasicProperties properties = new AMQP.BasicProperties().builder().headers(headers).build();
                 channel.basicPublish(HEADERS,"",properties,"hello rabbitmq  ".getBytes());
                 channel.close();
@@ -98,14 +103,24 @@ public class HeadersExchange {
                 Connection connection = factory.newConnection();
                 Channel channel = connection.createChannel();
                 channel.exchangeDeclare(HEADERS_QUEUE,ExchangeTypes.HEADERS);
-                channel.queueDeclare(HEADERS_QUEUE,false,false,true,null);
+                String queueName = channel.queueDeclare().getQueue();
+//                channel.queueDeclare(HEADERS_QUEUE,false,false,true,null);
                 Map<String,Object> headers = new HashMap<>();
-                headers.put("x-match","any");
-//                headers.put("x-match","all");
-                headers.put("key1","key1");
-                headers.put("key2","key1");
-                channel.queueBind(HEADERS_QUEUE,HEADERS,"",headers);
-                channel.basicConsume(HEADERS_QUEUE,new DefaultConsumer(channel){
+                if(name.endsWith("all")){
+                    headers.put("x-match","all");
+                    headers.put("name","张三");
+                    headers.put("phone","123456789");
+                }else if (name.endsWith("any1")){
+                    headers.put("x-match","any");
+                    headers.put("name","张三");
+                    headers.put("phone","0000");
+                }else{
+                    headers.put("x-match","any");
+                    headers.put("name","张三1");
+                    headers.put("phone","123456789");
+                }
+                channel.queueBind(queueName,HEADERS,"",headers);
+                channel.basicConsume(queueName,new DefaultConsumer(channel){
                     @Override
                     public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                         System.out.println("接收消息>>"+new String(body));

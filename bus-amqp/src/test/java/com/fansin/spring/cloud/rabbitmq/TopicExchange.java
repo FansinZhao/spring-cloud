@@ -55,7 +55,7 @@ public class TopicExchange {
          */
         @Override
         public void run() {
-            try (Connection connection = factory.newConnection();){
+            try (Connection connection = factory.newConnection()){
                 Channel channel = connection.createChannel();
                 channel.exchangeDeclare(TOPIC, ExchangeTypes.TOPIC);
                 for (String routingKey:routingKeys) {

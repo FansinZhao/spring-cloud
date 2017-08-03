@@ -68,7 +68,7 @@ public class FanoutExchangeOrPubSub {
 
             try (Connection connection = factory.newConnection()){
                 Channel channel = connection.createChannel();
-                channel.exchangeDeclare(EXCHANGE_LOG, ExchangeTypes.FANOUT);
+//                channel.exchangeDeclare(EXCHANGE_LOG, ExchangeTypes.FANOUT);
 
                 for (int i = 0; i < MSG_NUM; i++) {
 
