@@ -69,7 +69,7 @@ public class RPCDemo {
                         String message = new String(body);
                         int n = Integer.parseInt(message);
                         String responseBody =String.valueOf(fibonacci(n));
-                        channel.basicPublish("",properties.getReplyTo(),replyProp,responseBody.getBytes());
+                        channel.basicPublish("",replyQueue,replyProp,responseBody.getBytes());
                         channel.basicAck(envelope.getDeliveryTag(),false);
                         System.out.println("计算 Fibonacci ["+message+"] = "+responseBody);
                     }
@@ -109,11 +109,11 @@ public class RPCDemo {
             try {
                 Connection connection = factory.newConnection();
                 Channel channel = connection.createChannel();
+                //声明应答队列,默认是排他,自动删除,非持久队列,也就是说,当客户端停止了,队列就好消失
                 String queueName = channel.queueDeclare().getQueue();
                 String correlationId = UUID.randomUUID().toString();
                 AMQP.BasicProperties properties = new AMQP.BasicProperties().builder().correlationId(correlationId).replyTo(queueName).build();
                 channel.basicPublish("",REQUEST_QUEUE,properties,message.getBytes());
-
                 BlockingQueue<String> response = new ArrayBlockingQueue<String>(1);
                 channel.basicConsume(queueName,true,new DefaultConsumer(channel){
                     @Override

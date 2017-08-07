@@ -45,6 +45,17 @@
 			<artifactId>spring-cloud-starter-ribbon</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>com.dyuproject.protostuff</groupId>
+			<artifactId>protostuff-core</artifactId>
+			<version>1.0.12</version>
+		</dependency>
+		<dependency>
+			<groupId>com.dyuproject.protostuff</groupId>
+			<artifactId>protostuff-runtime</artifactId>
+			<version>1.0.12</version>
+		</dependency>
+
 	</dependencies>
 
 
