@@ -14,22 +14,56 @@ public class ClusterDemo {
 
     private static final String QUEUE = "queue.cluster";
 
+    private static String USER = "";
+    private static String PASSWD = "";
+
     public static void main(String[] args) throws InterruptedException {
 
-        /**
-         * 本地 5672 5673 5674 三个实例可以向任意一个发送消息,其他监听都可以收到,证明集群成功
-         */
-        ExecutorService service = Executors.newFixedThreadPool(2);
-        service.execute(new ClusterReceiver(5674));
-        latch.await();
-        service.execute(new ClusterSender(5673));
-        service.shutdown();
 
+        int i = 1;
+
+        switch (i){
+            case 0:
+
+                System.out.println("本地集群");
+                /**
+                 * 本地 5672 5673 5674 三个实例可以向任意一个发送消息,其他监听都可以收到,证明集群成功
+                 */
+                USER = "guest";
+                PASSWD = "guest";
+                ExecutorService service = Executors.newFixedThreadPool(2);
+                service.execute(new ClusterReceiver(5674));
+                latch.await();
+                service.execute(new ClusterSender(5673));
+                service.shutdown();
+
+                break;
+            case 1:
+
+                System.out.println("多机集群");
+                /**
+                 * 例如docker三个地址172.17.0.3 5672, 172.17.0.4 5672, 172.17.0.3 5672 三个实例可以向任意一个发送消息,其他监听都可以收到,证明集群成功
+                 */
+                USER = "admin";
+                PASSWD = "admin";
+                ExecutorService service1 = Executors.newFixedThreadPool(2);
+                service1.execute(new ClusterReceiver("172.17.0.3"));
+                latch.await();
+                service1.execute(new ClusterSender("172.17.0.4"));
+                service1.shutdown();
+
+                break;
+        }
     }
 
     static class ClusterSender implements Runnable{
 
-        int port;
+        int port = 5672;
+        String host = "localhost";
+
+        public ClusterSender(String host) {
+            this.host = host;
+        }
 
         public ClusterSender(int port) {
             this.port = port;
@@ -50,11 +84,14 @@ public class ClusterDemo {
         public void run() {
             ConnectionFactory factory = new ConnectionFactory();
             factory.setPort(this.port);
+            factory.setHost(this.host);
+            factory.setUsername(USER);
+            factory.setPassword(PASSWD);
             try {
                 Connection connection = factory.newConnection();
                 Channel channel = connection.createChannel();
                 channel.basicPublish("",QUEUE,null,"cluster msg...".getBytes());
-                System.out.println(factory.getPort()+" 发送消息");
+                System.out.println(factory.getHost()+ " " + factory.getPort()+" 发送消息");
                 channel.close();
                 connection.close();
             } catch (IOException e) {
@@ -67,7 +104,12 @@ public class ClusterDemo {
 
     static class ClusterReceiver implements Runnable{
 
-        int port;
+        int port = 5672;
+        String host = "localhost";
+
+        public ClusterReceiver(String host) {
+            this.host = host;
+        }
 
         public ClusterReceiver(int port) {
             this.port = port;
@@ -88,6 +130,9 @@ public class ClusterDemo {
         public void run() {
             ConnectionFactory factory = new ConnectionFactory();
             factory.setPort(this.port);
+            factory.setHost(this.host);
+            factory.setUsername(USER);
+            factory.setPassword(PASSWD);
             try {
                 Connection connection = factory.newConnection();
                 Channel channel = connection.createChannel();
@@ -95,7 +140,7 @@ public class ClusterDemo {
                 channel.basicConsume(QUEUE,true,new DefaultConsumer(channel){
                     @Override
                     public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-                        System.out.println(factory.getPort()+" 接收到消息:"+new String(body));
+                        System.out.println(factory.getHost()+ " " + factory.getPort()+" 接收到消息:"+new String(body));
                     }
                 });
             } catch (IOException e) {
@@ -105,7 +150,7 @@ public class ClusterDemo {
             }
 
 
-            System.out.println("客户端启动成功....");
+            System.out.println(factory.getHost() +" 客户端启动成功....");
             latch.countDown();
         }
     }
