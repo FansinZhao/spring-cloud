@@ -14,7 +14,7 @@ import java.util.concurrent.TimeoutException;
 public class TransactionVsPublishConfirm {
 
 
-    private static final int MSG_NUM = 100000;
+    private static final int MSG_NUM = 10000;
     private static final int BATCH = 1000;
 
     private static ConnectionFactory factory = new ConnectionFactory();
@@ -166,21 +166,21 @@ public class TransactionVsPublishConfirm {
                         try {
                             //开启 channel 事务
                             channel.txSelect();
-                            for (int i = 0; i < MSG_NUM;) {
-                                if (i%BATCH ==0){
-                                    for (int j = 0; j < BATCH; j++) {
-                                        String msg = "rabbitmq msg!";
-                                        if(i + j != MSG_NUM -1 ){
-                                            channel.basicPublish("", TRANSACTION, null, msg.getBytes());
-                                        }else{
-                                            channel.basicPublish("", TRANSACTION, null, "end".getBytes());
-                                        }
-                                    }
-                                    i += BATCH;
+                            for (int i = 0; i < MSG_NUM;i++) {
+                                String msg = "rabbitmq msg!";
+                                if(i != MSG_NUM -1 ){
+                                    channel.basicPublish("", TRANSACTION, null, msg.getBytes());
+                                }else{
+                                    channel.basicPublish("", TRANSACTION, null, "end".getBytes());
+                                }
+
+                                if (i>0 && i%BATCH ==0){
                                     //commit
                                     channel.txCommit();
                                 }
                             }
+                            //提交剩下的
+                            channel.txCommit();
 
                         } catch (Exception e) {
                             //回滚事务
@@ -226,6 +226,11 @@ public class TransactionVsPublishConfirm {
                         @Override
                         public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                             String msg = new String(body);
+                            try {
+                                Thread.sleep(3l);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                             //发送ack
                             channel.basicAck(envelope.getDeliveryTag(), false);
                             if (msg.equalsIgnoreCase("end")){
@@ -236,7 +241,7 @@ public class TransactionVsPublishConfirm {
                                     connection.close();
                                 } catch (TimeoutException e) {
                                     e.printStackTrace();
-                                }System.out.println("测试结束:"+System.currentTimeMillis());
+                                }
 
                             }
                         }
@@ -293,35 +298,43 @@ public class TransactionVsPublishConfirm {
                         try {
                             //开启confirm3 以channel为单位
                             channel.confirmSelect();
-                            for (int i = 0; i < MSG_NUM; i++) {
+                            for (int i = 0; i < MSG_NUM;i++) {
                                 String msg = "rabbitmq msg!";
                                 if(i  != MSG_NUM -1){
                                     channel.basicPublish("", CONFIRM, null, msg.getBytes());
                                 }else{
                                     channel.basicPublish("", CONFIRM, null, "end".getBytes());
                                 }
-                                //confirm
-//                                  waitForConfirmsOrDie 相对于 waitForConfirms 来说,只要有nack就好抛出异常,同时也是一种阻塞式
-                                channel.waitForConfirmsOrDie();
-//                                channel.addConfirmListener(new ConfirmListener() {
-//                                @Override
-//                                public void handleAck(long deliveryTag, boolean multiple) throws IOException {
-////                                        System.out.println("ack deliveryTag = " + deliveryTag);
-//                                }
-//
-//                                @Override
-//                                public void handleNack(long deliveryTag, boolean multiple) throws IOException {
-////                                        System.out.println("nack deliveryTag = " + deliveryTag);
-//                                }
-//                            });
+                                if (i>0 && i%BATCH ==0){
+                                    //commit
+//                                    channel.waitForConfirms();
+                                    channel.waitForConfirmsOrDie();
+                                    //                            confirm
+                                    //                              waitForConfirmsOrDie 相对于 waitForConfirms 来说,只要有nack就好抛出异常,同时也是一种阻塞式
+                                    //                            channel.waitForConfirmsOrDie();
+        //                            channel.addConfirmListener(new ConfirmListener() {
+        //                            @Override
+        //                            public void handleAck(long deliveryTag, boolean multiple) throws IOException {
+        ////                                        System.out.println("ack deliveryTag = " + deliveryTag);
+        //                            }
+        //
+        //                            @Override
+        //                            public void handleNack(long deliveryTag, boolean multiple) throws IOException {
+        ////                                        System.out.println("nack deliveryTag = " + deliveryTag);
+        //                            }
+        //                        });
+                                }
                             }
+                            //提交剩下的
+                            channel.waitForConfirmsOrDie();
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         } finally {
                             channel.close();
                         }
                         long end = System.currentTimeMillis();
-                        System.out.println("[confirm发送方]发送方耗时:" + (end - start));
+                        System.out.println("[confirm发送方]发送方耗时:" + (end - start) +" 批量大小="+BATCH);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -358,6 +371,11 @@ public class TransactionVsPublishConfirm {
                         @Override
                         public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                             String msg = new String(body);
+                            try {
+                                Thread.sleep(3);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                             //发送ack
                             channel.basicAck(envelope.getDeliveryTag(), false);
 //                     System.out.println("确认"+msg);
