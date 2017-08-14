@@ -3,15 +3,16 @@ package com.fansin.spring.cloud.rabbitmq;
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeoutException;
 
-public class HAWarrenProxyDemo {
+public class FederationDemo {
 
     private static CountDownLatch latch = new CountDownLatch(1);
 
-    private static final String QUEUE = "queue.haproxy";
+    private static final String QUEUE = "queue.federation";
 
     private static String USER = "";
     private static String PASSWD = "";
@@ -23,16 +24,18 @@ public class HAWarrenProxyDemo {
     public static void main(String[] args) throws InterruptedException {
 
 
-        System.out.println("HA");
+        System.out.println("federation");
         /**
-         * 本地 5672 5673 5674 三个实例可以向任意一个发送消息,其他监听都可以收到,证明集群成功
+         * 172.17.0.3 upstream上游源  172.17.0.4 downstream下游  三个实例可以向任意一个发送消息,其他监听都可以收到,证明集群成功
          */
         USER = "admin";
         PASSWD = "admin";
         ExecutorService service = Executors.newFixedThreadPool(2);
-        service.execute(new ClusterReceiver(5680));
+        //下游接收
+        service.execute(new ClusterReceiver("172.17.0.4"));
         latch.await();
-        service.execute(new ClusterSender(5680));
+        //上游源发送消息
+        service.execute(new ClusterSender("172.17.0.3"));
         service.shutdown();
 
     }
@@ -48,6 +51,11 @@ public class HAWarrenProxyDemo {
 
         public ClusterSender(int port) {
             this.port = port;
+        }
+
+        public ClusterSender( String host,int port) {
+            this.port = port;
+            this.host = host;
         }
 
         /**
@@ -100,6 +108,11 @@ public class HAWarrenProxyDemo {
             this.port = port;
         }
 
+        public ClusterReceiver(String host,int port) {
+            this.port = port;
+            this.host = host;
+        }
+
         /**
          * When an object implementing interface <code>Runnable</code> is used
          * to create a thread, starting the thread causes the object's
@@ -120,45 +133,40 @@ public class HAWarrenProxyDemo {
             factory.setPassword(PASSWD);
             //重要 不能少了这个重连设置
             factory.setAutomaticRecoveryEnabled(true);
-            BlockingQueue<Boolean> cancelQueue = new SynchronousQueue<>();
 
-            while (true){
-
-                try {
-                    System.out.println("连接客户端.....");
-                    Connection connection = factory.newConnection();
-                    Channel channel = connection.createChannel();
-                    channel.queueDeclare(QUEUE,false,false,false,null);
-                    Map<String, Object> args = new HashMap<String, Object>();
-//                    args.put("x-ha-policy", "all");
-//                    args.put("x-cancel-on-ha-failover",true);
-                    channel.basicConsume(QUEUE,true,new DefaultConsumer(channel){
-                        @Override
-                        public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-                            System.out.println(factory.getHost()+ " " + factory.getPort()+" 接收到消息:"+new String(body));
+            try {
+                System.out.println("连接客户端.....");
+                Connection connection = factory.newConnection();
+                Channel channel = connection.createChannel();
+                channel.exchangeDeclare("fed.exchange","direct");
+                channel.queueDeclare(QUEUE, false, false, false, null);
+                channel.queueBind(QUEUE,"fed.exchange","");
+                channel.basicConsume(QUEUE, true, new DefaultConsumer(channel) {
+                    @Override
+                    public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+                        System.out.println(factory.getHost() + " " + factory.getPort() + " 接收到消息:" + new String(body));
 //                            channel.basicAck(envelope.getDeliveryTag(),false);
-                            try {
-                                Thread.sleep(1000l);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                        try {
+                            Thread.sleep(1000l);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
+                    }
 
-                        @Override
-                        public void handleCancel(String consumerTag) throws IOException {
-                            System.out.println(consumerTag+" handleCancel 取消....");
-                            cancelQueue.offer(true);
-                        }
-                    });
+                    @Override
+                    public void handleCancel(String consumerTag) throws IOException {
+                        System.out.println(consumerTag + " handleCancel 取消....");
+                    }
+                });
 
-                    System.out.println(factory.getHost() + " " + factory.getPort() +" 客户端启动成功....");
-                    latch.countDown();
-                    cancelQueue.take();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    System.out.println("//////////////////////");
-                }
+                System.out.println(factory.getHost() + " " + factory.getPort() + " 客户端启动成功....");
+                latch.countDown();
+            } catch (TimeoutException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+
         }
     }
 }

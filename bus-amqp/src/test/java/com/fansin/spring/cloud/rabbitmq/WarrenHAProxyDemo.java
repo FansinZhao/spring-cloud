@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.*;
 
-public class HAProxyDemo {
+public class WarrenHAProxyDemo {
 
     private static CountDownLatch latch = new CountDownLatch(1);
 
@@ -23,16 +23,16 @@ public class HAProxyDemo {
     public static void main(String[] args) throws InterruptedException {
 
 
-        System.out.println("HA");
+        System.out.println("HA backup");
         /**
          * 本地 5672 5673 5674 三个实例可以向任意一个发送消息,其他监听都可以收到,证明集群成功
          */
         USER = "admin";
         PASSWD = "admin";
         ExecutorService service = Executors.newFixedThreadPool(2);
-        service.execute(new ClusterReceiver(5670));
+        service.execute(new ClusterReceiver(5680));
         latch.await();
-        service.execute(new ClusterSender(5670));
+        service.execute(new ClusterSender(5680));
         service.shutdown();
 
     }
@@ -118,7 +118,7 @@ public class HAProxyDemo {
             factory.setHost(this.host);
             factory.setUsername(USER);
             factory.setPassword(PASSWD);
-            //重要 自动重连
+            //重要 不能少了这个重连设置
             factory.setAutomaticRecoveryEnabled(true);
 
             try {
@@ -151,6 +151,7 @@ public class HAProxyDemo {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
         }
     }
 }
