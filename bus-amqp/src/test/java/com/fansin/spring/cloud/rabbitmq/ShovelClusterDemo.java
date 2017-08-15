@@ -3,37 +3,35 @@ package com.fansin.spring.cloud.rabbitmq;
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeoutException;
 
-public class HAProxyDemo {
+public class ShovelClusterDemo {
 
     private static CountDownLatch latch = new CountDownLatch(1);
 
-    private static final String QUEUE = "queue.haproxy";
+    private static final String QUEUE = "queue.shovel";
 
     private static String USER = "";
     private static String PASSWD = "";
 
-    private static int MSG_NUM = 1000;
-
-
+    private static final int MSG_NUM = 100;
 
     public static void main(String[] args) throws InterruptedException {
 
-
-        System.out.println("HA");
+        System.out.println("shovel 消息复制 集群");
         /**
-         * 本地 5672 5673 5674 三个实例可以向任意一个发送消息,其他监听都可以收到,证明集群成功
+         * 172.17.0.3 上游 172.17.0.4 下游 三个实例可以向任意一个发送消息,其他监听都可以收到,证明集群成功
          */
         USER = "admin";
         PASSWD = "admin";
-        ExecutorService service = Executors.newFixedThreadPool(2);
-        service.execute(new ClusterReceiver(5670));
+        ExecutorService service1 = Executors.newFixedThreadPool(2);
+        service1.execute(new ClusterReceiver("172.17.0.4"));
         latch.await();
-        service.execute(new ClusterSender(5670));
-        service.shutdown();
+        service1.execute(new ClusterSender("172.17.0.3"));
+        service1.shutdown();
 
     }
 
@@ -71,15 +69,13 @@ public class HAProxyDemo {
             try {
                 Connection connection = factory.newConnection();
                 Channel channel = connection.createChannel();
-                channel.queueDeclare(QUEUE, false, false, false, null);
-                for (int i = 0; i < MSG_NUM; i++) {
-                    String msg = "cluster msg..."+i;
-                    System.out.println(msg);
+                for (int i = 1; i <= MSG_NUM; i++) {
+                    String msg = "shovel 消息"+i;
                     channel.basicPublish("",QUEUE,null,msg.getBytes());
                 }
+                System.out.println(factory.getHost()+ " " + factory.getPort()+" 发送消息完毕 "+ MSG_NUM);
                 channel.close();
                 connection.close();
-                System.out.println(factory.getHost()+ " " + factory.getPort()+" 发送完毕....");
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (TimeoutException e) {
@@ -119,39 +115,24 @@ public class HAProxyDemo {
             factory.setHost(this.host);
             factory.setUsername(USER);
             factory.setPassword(PASSWD);
-            //重要 自动重连
-            factory.setAutomaticRecoveryEnabled(true);
-
             try {
-                System.out.println("连接客户端.....");
                 Connection connection = factory.newConnection();
                 Channel channel = connection.createChannel();
-                channel.queueDeclare(QUEUE, false, false, false, null);
-                channel.basicConsume(QUEUE, true, new DefaultConsumer(channel) {
+                channel.queueDeclare(QUEUE,false,false,false,null);
+                channel.basicConsume(QUEUE,true,new DefaultConsumer(channel){
                     @Override
                     public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-                        System.out.println(factory.getHost() + " " + factory.getPort() + " 接收到消息:" + new String(body));
-//                            channel.basicAck(envelope.getDeliveryTag(),false);
-                        try {
-                            Thread.sleep(1000l);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void handleCancel(String consumerTag) throws IOException {
-                        System.out.println(consumerTag + " handleCancel 取消....");
+                        System.out.println(factory.getHost()+ " " + factory.getPort()+" 接收到消息:"+new String(body));
                     }
                 });
-
-                System.out.println(factory.getHost() + " " + factory.getPort() + " 客户端启动成功....");
-                latch.countDown();
-            } catch (TimeoutException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (TimeoutException e) {
+                e.printStackTrace();
             }
+
+            System.out.println(factory.getHost() +"shovel downstream 客户端启动,等待消息...");
+            latch.countDown();
         }
     }
 }
