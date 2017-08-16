@@ -32,9 +32,9 @@ public class ClusterDemo {
                 USER = "guest";
                 PASSWD = "guest";
                 ExecutorService service = Executors.newFixedThreadPool(2);
-                service.execute(new ClusterReceiver(5674));
+                service.execute(new ClusterReceiver("localhost:5672"));
                 latch.await();
-                service.execute(new ClusterSender(5673));
+                service.execute(new ClusterSender("localhost:5673"));
                 service.shutdown();
 
                 break;
@@ -47,9 +47,9 @@ public class ClusterDemo {
                 USER = "admin";
                 PASSWD = "admin";
                 ExecutorService service1 = Executors.newFixedThreadPool(2);
-                service1.execute(new ClusterReceiver("172.17.0.3"));
+                service1.execute(new ClusterReceiver("172.17.0.3:5672"));
                 latch.await();
-                service1.execute(new ClusterSender("172.17.0.4"));
+                service1.execute(new ClusterSender("172.17.0.4:5672"));
                 service1.shutdown();
 
                 break;
@@ -58,15 +58,17 @@ public class ClusterDemo {
 
     static class ClusterSender implements Runnable{
 
-        int port = 5672;
-        String host = "localhost";
+        Address[] addresses = new Address[]{new Address("localhost",5672)};
 
-        public ClusterSender(String host) {
-            this.host = host;
-        }
-
-        public ClusterSender(int port) {
-            this.port = port;
+        public ClusterSender(String... hosts) {
+            addresses = new Address[hosts.length];
+            for (int i = 0; i < hosts.length; i++) {
+                String[] host = hosts[i].split(":");
+                if(host.length != 2){
+                    System.err.println("格式错误,确保格式 host:port! 错误格式" + host[i]);
+                }
+                addresses[i] = new Address(host[0],Integer.parseInt(host[1]));
+            }
         }
 
         /**
@@ -83,15 +85,13 @@ public class ClusterDemo {
         @Override
         public void run() {
             ConnectionFactory factory = new ConnectionFactory();
-            factory.setPort(this.port);
-            factory.setHost(this.host);
             factory.setUsername(USER);
             factory.setPassword(PASSWD);
             try {
-                Connection connection = factory.newConnection();
+                Connection connection = factory.newConnection(addresses);
                 Channel channel = connection.createChannel();
                 channel.basicPublish("",QUEUE,null,"cluster msg...".getBytes());
-                System.out.println(factory.getHost()+ " " + factory.getPort()+" 发送消息");
+                System.out.println(connection.getAddress().getHostAddress()+ " " + factory.getPort()+" 发送消息");
                 channel.close();
                 connection.close();
             } catch (IOException e) {
@@ -104,15 +104,18 @@ public class ClusterDemo {
 
     static class ClusterReceiver implements Runnable{
 
-        int port = 5672;
-        String host = "localhost";
 
-        public ClusterReceiver(String host) {
-            this.host = host;
-        }
+        Address[] addresses = new Address[]{new Address("localhost",5672)};
 
-        public ClusterReceiver(int port) {
-            this.port = port;
+        public ClusterReceiver(String... hosts) {
+            addresses = new Address[hosts.length];
+            for (int i = 0; i < hosts.length; i++) {
+                String[] host = hosts[i].split(":");
+                if(host.length != 2){
+                    System.err.println("格式错误,确保格式 host:port! 错误格式" + host[i]);
+                }
+                addresses[i] = new Address(host[0],Integer.parseInt(host[1]));
+            }
         }
 
         /**
@@ -129,20 +132,20 @@ public class ClusterDemo {
         @Override
         public void run() {
             ConnectionFactory factory = new ConnectionFactory();
-            factory.setPort(this.port);
-            factory.setHost(this.host);
             factory.setUsername(USER);
             factory.setPassword(PASSWD);
             try {
-                Connection connection = factory.newConnection();
+                Connection connection = factory.newConnection(addresses);
                 Channel channel = connection.createChannel();
                 channel.queueDeclare(QUEUE,false,false,false,null);
                 channel.basicConsume(QUEUE,true,new DefaultConsumer(channel){
                     @Override
                     public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-                        System.out.println(factory.getHost()+ " " + factory.getPort()+" 接收到消息:"+new String(body));
+                        System.out.println(connection.getAddress().getHostAddress()+ " " + factory.getPort()+" 接收到消息:"+new String(body));
                     }
                 });
+                System.out.println(connection.getAddress().getHostAddress() +" 客户端启动成功....");
+                latch.countDown();
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (TimeoutException e) {
@@ -150,8 +153,6 @@ public class ClusterDemo {
             }
 
 
-            System.out.println(factory.getHost() +" 客户端启动成功....");
-            latch.countDown();
         }
     }
 }
