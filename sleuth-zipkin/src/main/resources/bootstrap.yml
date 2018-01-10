@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: spring-cloud-sleuth-server
+#心跳检测
+health:
+  config:
+    enabled: true
+#   默认为5min
+    time-to-live: 300000

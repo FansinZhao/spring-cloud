@@ -1,0 +1,42 @@
+server:
+  port: 9411
+management:
+  health:
+    rabbit:
+      enabled: false
+spring:
+  rabbitmq:
+    addresses: 172.20.0.2:5672
+    username: admin
+    password: admin
+  zipkin:
+    locator:
+      discovery:
+        enabled: true
+    service:
+      name: ${spring.application.name}
+  sleuth:
+    enabled: true
+    sampler:
+      percentage: 0.1
+    trace-id128: false
+# 可以监控到多种行为
+# TraceAsyncAspect(@org.springframework.scheduling.annotation.Async) 异步操作 aspectj
+# SleuthHystrixConcurrencyStrategy(追踪HystrixCommand) 熔断器 策略模式+订阅模式
+# TraceChannelInterceptor Message(mq,kafka,websocket) AOP拦截器模式
+# SleuthRxJavaSchedulersHook rxjava(java9中新增flow模块) RxJavaSchedulersHook wrap方式(!注意 这里使用了过时方法onSchedule(),不知道以后版本会不会改为java9的flow )
+# TraceSchedulingAspect (@org.springframework.scheduling.annotation.Scheduled) spring定时任务 aspectj
+# TraceFilter http 过滤器filter
+# TraceHandlerInterceptor http  HandlerInterceptorAdapter拦截适配器+AOP拦截器
+# TraceWebAspect(@org.springframework.stereotype.Controller) springmvc中controllers aspectj
+# web的还有好多不在一一列举,包括不限于restTemplate,httpRequest,feign
+# TracePostZuulFilter/TracePreZuulFilter zuul路由 过滤器filter
+#服务治理
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka/,http://127.0.0.1:8762/eureka/
+#   客户端请求时间
+    registry-fetch-interval-seconds: 5
+
+
