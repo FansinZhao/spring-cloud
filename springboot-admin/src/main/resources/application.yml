@@ -1,0 +1,23 @@
+######### 从配置中心读取,如果读取成功则替换,否则采用下面默认配置 ###########
+info:
+  component: Application Server ${spring.application.name}
+# 加入服务发现
+server:
+  port: 8080 # 与从config中心拿到的端口信息不同
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka/,http://127.0.0.1:8762/eureka/
+#   客户端请求时间
+    registry-fetch-interval-seconds: 5
+spring:
+  profiles: master
+  boot:
+    admin:
+      discovery:
+        enabled: true
+management:
+  security:
+    enabled: false
+
+
