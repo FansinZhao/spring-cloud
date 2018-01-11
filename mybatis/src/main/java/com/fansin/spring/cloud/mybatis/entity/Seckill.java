@@ -3,7 +3,7 @@ package com.fansin.spring.cloud.mybatis.entity;
 import java.util.Date;
 
 /**
- * Created by zhaofeng on 17-4-9.
+ * @author zhaofeng on 17-4-9.
  */
 public class Seckill {
 

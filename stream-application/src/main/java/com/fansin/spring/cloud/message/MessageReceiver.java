@@ -6,7 +6,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Component;
 
 /**
- * Created by zhaofeng on 17-6-20.
+ * @author zhaofeng on 17-6-20.
  */
 @Component
 public class MessageReceiver {

@@ -1,7 +1,8 @@
 package com.fansin.spring.cloud.kafka.pojo;
 
 /**
- * Created by zhaofeng on 17-6-22.
+ * @author  zhaofeng
+ * @date 17-6-22.
  */
 public class SinkMessage {
 

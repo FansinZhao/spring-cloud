@@ -14,9 +14,11 @@ import org.springframework.web.client.RestTemplate;
 import java.io.File;
 import java.net.URI;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 /**
- * Created by zhaofeng on 17-6-5.
+ * @author fansin
+ * @author zhaofeng on 17-6-5.
  */
 @Component
 public class RibbonClient implements InitializingBean,DisposableBean{

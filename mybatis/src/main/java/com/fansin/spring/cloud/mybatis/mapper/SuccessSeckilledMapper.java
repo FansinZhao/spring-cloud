@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 /**
- * Created by zhaofeng on 17-4-9.
+ * @author zhaofeng on 17-4-9.
  */
 @Mapper
 public interface SuccessSeckilledMapper {

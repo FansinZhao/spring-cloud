@@ -6,7 +6,7 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.SubscribableChannel;
 
 /**
- * Created by zhaofeng on 17-6-20.
+ * @author zhaofeng on 17-6-20.
  */
 public interface HelloBinding {
 

@@ -1,7 +1,7 @@
 package com.fansin.spring.cloud.controller;
 
 /**
- * Created by zhaofeng on 17-6-12.
+ * @author zhaofeng on 17-6-12.
  */
 
 import org.springframework.web.bind.annotation.RequestMapping;

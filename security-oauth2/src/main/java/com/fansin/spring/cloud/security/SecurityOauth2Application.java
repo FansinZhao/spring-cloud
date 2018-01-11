@@ -5,12 +5,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
-
+/**
+ * @author fansin
+ *
+ * 开启Spring-cloud-security
+ * @EnableGlobalMethodSecurity
+ */
 @SpringBootApplication
 @EnableAuthorizationServer
 @EnableOAuth2Client
-//开启Spring-cloud-security
-//@EnableGlobalMethodSecurity
 public class SecurityOauth2Application {
 
 	public static void main(String[] args) {

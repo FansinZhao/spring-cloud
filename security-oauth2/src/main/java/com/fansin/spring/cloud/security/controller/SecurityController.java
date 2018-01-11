@@ -14,28 +14,33 @@ import java.util.Arrays;
 import java.util.Map;
 
 /**
- * Created by zhaofeng on 17-6-26.
+ * The type Security controller.
+ *
+ * @author zhaofeng on 17-6-26.
  */
 @RestController
 public class SecurityController {
 
+    /**
+     * Index string.
+     *
+     * @return the string
+     */
     @RequestMapping("/")
     public String index(){
         return "security-oauth2 Startup Successful";
     }
 
+    /**
+     * Login model and view.
+     *
+     * @param clientId the client id
+     * @param scopes   the scopes
+     * @param model    the model
+     * @return the model and view
+     */
     @RequestMapping("/login")
-    public ModelAndView login(String clientId, String[] scopes, Map<String, Object> model, HttpServletResponse response) throws IOException {
-//        String template = "<html> <head></head> <body> <form id=\"loginForm\" name=\"loginForm\" action=\"/oauth/confirm_access\" method=\"post\"> <input name=\"authorizationRequest.clientId\" value=\"oauth2-client-id\" /> <label><input name=\"login\" value=\"login\" type=\"submit\" /></label> </form> </body> </html>";
-//        response.setContentType("text/html;charset=utf-8");
-//        PrintWriter out=response.getWriter();
-//        out.println(template);
-//        return new ModelAndView("/");
-//        model.getModel();
-//        ModelAndView modelAndView = new ModelAndView("forward:/oauth/confirm_access");
-//        AuthorizationRequest authorizationRequest = new AuthorizationRequest("oauth2-client-id", Arrays.asList("read,write,trust"));
-//        modelAndView.addObject("authorizationRequest",authorizationRequest);
-//        modelAndView.getModelMap().addAttribute("authorizationRequest",authorizationRequest);
+    public ModelAndView login(String clientId, String[] scopes, Map<String, Object> model) {
 
         AuthorizationRequest authorizationRequest = new AuthorizationRequest(clientId,Arrays.asList(scopes));
         model.put("authorizationRequest", authorizationRequest);
@@ -45,27 +50,55 @@ public class SecurityController {
         return null;
     }
 
-//  正则匹配所有 ignore0-ignore9
+    /**
+     * Ignore string.
+     *
+     *  正则匹配所有 ignore0-ignore9
+     *
+     * @param url the url
+     * @return the string
+     */
     @RequestMapping("/{url:ignore[0-9]}")
     public String ignore(@PathVariable String url){
         return url;
     }
 
+    /**
+     * Get user token string.
+     *
+     * @return the string
+     */
     @RequestMapping("/getUserToken")
     public String getUserToken(){
         return "99999999";
     }
 
+    /**
+     * Welcome string.
+     *
+     * @return the string
+     */
     @RequestMapping("/welcome")
     public String welcome(){
         return "welcome";
     }
 
+    /**
+     * Registered string.
+     *
+     * @param user the user
+     * @return the string
+     */
     @RequestMapping(value = "/registered",method = RequestMethod.POST)
     public String registered(User user){
         return user.toString();
     }
 
+    /**
+     * User string.
+     *
+     * @return the string
+     */
     @RequestMapping("/user")
     public String user(){
         return "user信息......";

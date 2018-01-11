@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Created by zhaofeng on 17-6-20.
+ * The type Stream controller.
+ * @RefreshScope --> /bus/refresh
+ * @author zhaofeng
+ * @date 17 -6-20.
  */
-//@RefreshScope --> /bus/refresh
 @RefreshScope
 @RestController
 public class StreamController {
@@ -20,6 +22,11 @@ public class StreamController {
     @Value("${bus.key}")
     private String busValue;
 
+    /**
+     * Show env string.
+     *
+     * @return the string
+     */
     @RequestMapping("/busEnv")
     public String showEnv(){
         return busValue;
@@ -28,11 +35,22 @@ public class StreamController {
     @Autowired
     private Processor processor;
 
+    /**
+     * Index string.
+     *
+     * @return the string
+     */
     @RequestMapping("/")
     public String index(){
         return "StreamApplication Startup successful!";
     }
 
+    /**
+     * Send msg string.
+     *
+     * @param msg the msg
+     * @return the string
+     */
     @RequestMapping("/send/{msg}")
     public String sendMsg(@PathVariable String msg){
         boolean result = processor.output().send(MessageBuilder.withPayload(msg).build());

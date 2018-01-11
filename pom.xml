@@ -26,6 +26,9 @@
 		<module>bus-amqp</module>
 		<module>bus-kafka</module>
 		<module>security-oauth2</module>
+        <module>sleuth-zipkin</module>
+        <module>springboot-admin</module>
+		<module>mybatis</module>
 	</modules>
 
 	<properties>
@@ -89,6 +92,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
                 <executions>
+					<!--springboot-admin-->
                     <execution>
                         <goals>
                             <goal>build-info</goal>

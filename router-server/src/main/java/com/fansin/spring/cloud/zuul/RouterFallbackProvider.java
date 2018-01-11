@@ -1,6 +1,6 @@
 package com.fansin.spring.cloud.zuul;
 
-import org.springframework.cloud.netflix.zuul.filters.route.ZuulFallbackProvider;
+import org.springframework.cloud.netflix.zuul.filters.route.FallbackProvider;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,10 +12,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Created by zhaofeng on 17-6-12.
+ * @author zhaofeng on 17-6-12.
  */
 @Component
-public class RouterFallbackProvider implements ZuulFallbackProvider {
+public class RouterFallbackProvider implements FallbackProvider {
 
     /**
      * The route this fallback will be used for.
@@ -69,5 +69,18 @@ public class RouterFallbackProvider implements ZuulFallbackProvider {
                 return headers;
             }
         };
+    }
+
+    /**
+     * Provides a fallback response based on the cause of the failed execution.
+     *
+     * @param cause cause of the main method failure
+     * @return the fallback response
+     */
+    @Override
+    public ClientHttpResponse fallbackResponse(Throwable cause) {
+        cause.printStackTrace();
+        //根据cause返回不同的response
+        return null;
     }
 }

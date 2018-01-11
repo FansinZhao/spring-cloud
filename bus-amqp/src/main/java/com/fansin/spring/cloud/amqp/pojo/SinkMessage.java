@@ -1,7 +1,7 @@
 package com.fansin.spring.cloud.amqp.pojo;
 
 /**
- * Created by zhaofeng on 17-6-22.
+ * @author zhaofeng on 17-6-22.
  */
 public class SinkMessage {
 

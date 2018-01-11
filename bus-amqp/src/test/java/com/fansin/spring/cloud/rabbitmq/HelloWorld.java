@@ -13,7 +13,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * http://www.rabbitmq.com/tutorials/tutorial-one-java.html
  *
- * Created by zhaofeng on 17-7-27.
+ * @author zhaofeng on 17-7-27.
  */
 public class HelloWorld {
 

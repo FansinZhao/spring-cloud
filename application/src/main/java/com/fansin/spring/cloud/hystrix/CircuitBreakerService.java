@@ -7,7 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Created by zhaofeng on 17-6-8.
+ * @author zhaofeng
+ * @date 17-6-8.
  *
  * 访问 http://127.0.0.1:8011/hystrix 打开面板 可在日志中发现 "Proxy opening connection to:"字样
  * 输入 http://127.0.0.1:8011/hystrix.stream 查看单机版的熔断信息

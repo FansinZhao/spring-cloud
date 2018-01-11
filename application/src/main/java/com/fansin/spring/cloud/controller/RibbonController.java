@@ -10,9 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Created by zhaofeng on 17-6-5.
+ * The type Ribbon controller.
+ * RestController see Controller ResponseBody
+ * @author zhaofeng on 17-6-5.
  */
-//RestController see Controller ResponseBody
 @RestController
 public class RibbonController {
 
@@ -25,16 +26,32 @@ public class RibbonController {
     private CircuitBreakerService circuitBreakerService;
 
 
+    /**
+     * Ops string.
+     *
+     * @return the string
+     */
     @RequestMapping("/")
     public String ops(){
         return "Startup successful";
     }
 
+    /**
+     * Do service string.
+     *
+     * @param service the service
+     * @return the string
+     */
     @RequestMapping("/doService/{service}")
     public String doService(@PathVariable String service){
         return circuitBreakerService.invokeRemoteService(serviceId,service);
     }
 
+    /**
+     * Service string.
+     *
+     * @return the string
+     */
     @RequestMapping("/service")
     public String service(){
 

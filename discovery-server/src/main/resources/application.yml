@@ -30,6 +30,8 @@ eureka:
   instance:
     hostname: localhost
     prefer-ip-address: true
+#   配合上面 'prefer-ip-address' ,具体参数查看 HostInfoEnvironmentPostProcessor
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
 #   期待下次心跳
     lease-expiration-duration-in-seconds: 60
 #   超时移除客户端
@@ -57,6 +59,8 @@ eureka:
   instance:
     hostname: localhost
     prefer-ip-address: true
+#   配合上面 'prefer-ip-address' ,具体参数查看 HostInfoEnvironmentPostProcessor
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
   client:
     serviceUrl:
       defaultZone: http://${peer.server.hostname}:${peer.server.port}/eureka/

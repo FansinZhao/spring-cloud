@@ -6,14 +6,21 @@ import org.springframework.stereotype.Component;
 
 
 /**
- * Created by zhaofeng on 17-6-20.
+ * The type Message receiver.
+ *
+ * @author zhaofeng on 17-6-20.
  */
 @Component
 public class MessageReceiver {
 
-    //异步 只能监听 @input
+    /**
+     * Receive msg.
+     *
+     * 异步 只能监听 @input
+     *
+     * @param msg the msg
+     */
     @StreamListener(Processor.INPUT)
-//    public void receiveMsg(SinkMessage msg) {//json 转换
     public void receiveMsg(String msg) {
         System.out.println("接收消息 msg = " + msg);
     }

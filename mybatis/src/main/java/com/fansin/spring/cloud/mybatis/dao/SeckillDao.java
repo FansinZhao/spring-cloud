@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * Created by zhaofeng on 17-4-9.
+ * @author zhaofeng on 17-4-9.
  */
 @Service
 public class SeckillDao {
@@ -13,6 +13,6 @@ public class SeckillDao {
     SeckilllMapper seckilllMapper;
 
     public void test(){
-        seckilllMapper.queryById(1000l);
+        seckilllMapper.queryById(1000L);
     }
 }

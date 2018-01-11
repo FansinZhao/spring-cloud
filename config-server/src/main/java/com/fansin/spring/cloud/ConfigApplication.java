@@ -9,6 +9,7 @@ import org.springframework.cloud.config.server.EnableConfigServer;
 
 
 /**
+ * @author fansin
  * SpringCloudApplication 包含了SpringBootApplication,EnableDiscoveryClient,EnableCircuitBreaker
  * EnableDiscoveryClient 包含了 EnableEurekaClient,zk,consul
  */

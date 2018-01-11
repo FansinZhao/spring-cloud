@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Created by zhaofeng on 17-6-20.
+ * @author zhaofeng on 17-6-20.
  */
 @RefreshScope
 @RestController

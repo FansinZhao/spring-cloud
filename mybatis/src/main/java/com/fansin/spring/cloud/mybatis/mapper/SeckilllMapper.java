@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by zhaofeng on 17-4-9.
+ * @author zhaofeng on 17-4-9.
  */
 @Mapper
 public interface SeckilllMapper {

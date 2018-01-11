@@ -1,0 +1,23 @@
+# 启动基础应用
+
+version: '3'
+services:
+  springcloud-rabbitmq:
+    image: fansin/rabbitmq-cluster
+    deploy:
+      restart_policy:
+        condition: on-failure
+    networks:
+      - springcloud_net
+    environment:
+      - RABBITMQ_ERLANG_COOKIE='secret cookie here'
+
+networks:
+  springcloud_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      -
+        subnet: 172.16.0.0/16
+

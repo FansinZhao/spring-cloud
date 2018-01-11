@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 
 /**
- * Created by zhaofeng on 17-7-28.
+ * @author zhaofeng on 17-7-28.
  */
 public class TransactionVsPublishConfirm {
 

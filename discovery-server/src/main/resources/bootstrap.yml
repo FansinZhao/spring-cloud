@@ -2,7 +2,11 @@
 ############# master ################
 spring:
   application:
-    name: discovery-eureka-server-master #多个服务分布式集群时修改不同名称
+    #多个服务分布式集群时修改不同名称
+    name: discovery-eureka-server-master
+  cloud:
+    inetutils:
+      default-ip-address:
 ############# slave ################
 #spring:
 #  application:
