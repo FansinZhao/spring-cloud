@@ -2,16 +2,18 @@
 info:
   component: Application Server ${spring.application.name}
 # 加入服务发现
-server:
-  port: 8011 # 与从config中心拿到的端口信息不同
+#server:
+#  port: 8012 # 与从config中心拿到的端口信息不同
 eureka:
   client:
     service-url:
       defaultZone: http://127.0.0.1:8761/eureka/,http://127.0.0.1:8762/eureka/
 #   客户端请求时间
     registry-fetch-interval-seconds: 5
-
-
+  instance:
+    prefer-ip-address: true
+#   配合上面 'prefer-ip-address' ,具体参数查看 HostInfoEnvironmentPostProcessor
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
 # 应用管理
 management:
   health:
@@ -52,10 +54,6 @@ hystrix:
     polling-interval-ms: 2000
   dashboard:
     enable-ignore-connection-close-header: false
-# 用户配置信息 配置调用服务接口
-ServiceId:
-  RibbonController: spring-cloud-application-a
-  FeignController: ${ServiceId.RibbonController}
 ############### 日志  ###############
 debug: false # true时输出更多
 logging:
@@ -63,3 +61,47 @@ logging:
   level:
     org.springframework.boot: info
     com.fansin.spring.cloud: debug
+#sleuth-zipkin
+spring:
+  sleuth:
+    enabled: true
+#   这里默认采集比较低,需要多次刷新才能在zipkin看到,设置太大会耗性能
+    sampler:
+      percentage: 0.1
+  zipkin:
+    locator:
+      discovery:
+        enabled: true
+    base-url: http://127.0.0.1:9411/
+    enabled: true
+    compression:
+      enabled: true
+  profiles:
+    active: a
+#springboot admin
+  boot:
+    admin:
+      url: http://127.0.0.1:8080
+#sleuth-zipkin
+---
+spring:
+  profiles: a
+  application:
+    name: spring-cloud-application-a
+server:
+  port: 8011
+# 用户配置信息 配置调用服务接口
+ServiceId:
+  RibbonController: spring-cloud-application-b
+  FeignController: ${ServiceId.RibbonController}
+---
+spring:
+  profiles: b
+  application:
+    name: spring-cloud-application-b
+server:
+  port: 8012
+# 用户配置信息 配置调用服务接口
+ServiceId:
+  RibbonController: spring-cloud-application-a
+  FeignController: ${ServiceId.RibbonController}

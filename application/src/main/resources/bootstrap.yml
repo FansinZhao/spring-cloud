@@ -1,6 +1,4 @@
 spring:
-  application:
-    name: spring-cloud-application-a
 # 根据官方文档说明,配置config中心必须配置在bootstrap.yml
   cloud:
     config:
