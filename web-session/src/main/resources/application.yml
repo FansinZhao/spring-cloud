@@ -1,0 +1,33 @@
+
+#指定session存储
+spring:
+  session:
+    redis:
+      flush-mode: on_save
+      namespace: springSession
+    store-type: redis
+  redis:
+    host: 172.16.0.3
+    port: 6379
+#    需要redis开启集群模式支持
+#    cluster:
+#      nodes: 172.16.0.3:6379,172.16.0.4:6379
+#      max-redirects: 9
+#    sentinel:
+#      master: 172.16.0.3:6379
+#      nodes: 172.16.0.3:6379
+    database: 0
+  cache:
+    ehcache:
+      config:
+#   cache-names是应用存储时的缓存命名,对应@Cacheable(value="user")
+    cache-names: user
+    caffeine:
+      spec: maximumSize=500,expireAfterAccess=600s
+server:
+  session:
+#  为了方便测试 30s
+    timeout: 30
+  port: 8080
+logging:
+  level: trace

@@ -1,0 +1,21 @@
+# 启动基础应用
+version: '3.5'
+services:
+  springcloud-redis:
+    image: redis:alpine
+    networks:
+      network:
+        ipv4_address: 172.16.0.3
+networks:
+  network:
+    name: springcloud_net
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      -
+        subnet: 172.16.0.0/16
+#networks:
+#  default:
+#    external:
+#      name: springcloud_net
