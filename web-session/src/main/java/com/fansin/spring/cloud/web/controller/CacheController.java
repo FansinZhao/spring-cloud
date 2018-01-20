@@ -32,7 +32,7 @@ public class CacheController {
                 "<p>JCache(JSR-107) -- 定义了一套缓存规范,5中接口,CachingProvider->CacheManager->Cache->Entry,Expiry.可以使用其他兼容库(类似sf4j),下面所有的库都是基于这个标准的! \n</p>" +
                 "<p/>" +
                 "<p>EhCache -- 适合缓存访问实时性高 Hibernate默认的内存/磁盘级缓存\n</p>" +
-                "<p>Hazelcast --大数据下效率高 基于内存的数据网格管理平台,高度可扩展的数据分发和集群平台\n</p>" +
+                "<p>Hazelcast --大数据下效率高,无中心化 基于内存的数据网格管理平台,高度可扩展的数据分发和集群平台\n</p>" +
                 "<p>Infinispan --高并发下 基于内存来进行键值对存储的分布式存储工具\n</p>" +
                 "<p>Couchbase --需要高性能,高可用性和高伸缩性场景 具有高性能、可扩展性和可用性强的数据库引擎,分布式数据库\n</p>" +
                 "<p>Redis --业务数据类型多样 高性能的key-value数据库\n</p>" +
