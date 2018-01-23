@@ -1,9 +1,8 @@
 package com.fansin.spring.cloud.mybatis.mapper;
 
-import com.fansin.seckill.mybatis.entity.Seckill;
+import com.fansin.spring.cloud.mybatis.entity.Seckill;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-
 import java.util.Date;
 import java.util.List;
 

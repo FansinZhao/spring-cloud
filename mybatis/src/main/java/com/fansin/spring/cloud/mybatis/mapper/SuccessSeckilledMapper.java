@@ -1,6 +1,6 @@
 package com.fansin.spring.cloud.mybatis.mapper;
 
-import com.fansin.seckill.mybatis.entity.SuccessSeckilled;
+import com.fansin.spring.cloud.mybatis.entity.SuccessSeckilled;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
