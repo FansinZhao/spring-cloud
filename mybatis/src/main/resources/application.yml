@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    password: 1234
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://172.16.0.6:3306/mybatis?charset=utf8
+    username: root
+#mybatis
+#####1 自动查找datasource #####
+#####2 自动注册SqlSessionFactoryBean #####
+#####3 自动注册SqlSessionTemplate #####
+#####4 自动扫描mappers #####
+mybatis:
+  configuration:
+#使用别名
+    use-column-label: true
+#默认空参数为null
+    jdbc-type-for-null: null
+#启用驼峰转换
+    map-underscore-to-camel-case: true
+#启用jdbc获取自增
+    use-generated-keys: true
+#自动扫描配置
+#entity包扫描
+  type-aliases-package: com.fansin.spring.cloud.mybatis.entity
+#映射文件位置 idea 下使用classpath*:/XXX
+  mapper-locations: classpath*:mapper/*Mapper.xml

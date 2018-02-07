@@ -1,0 +1,24 @@
+version: '3.5'
+services:
+  mybatis:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      character-set-server: utf8mb4
+      collation-server: utf8mb4_unicode_ci
+    networks:
+      network:
+        ipv4_address: 172.16.0.6
+    volumes:
+      - /home/fansin/IdeaProjects/spring-cloud/mybatis/src/main/resources/sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+
+
+networks:
+  network:
+    name: springcloud_net
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        -
+          subnet: 172.16.0.0/16
