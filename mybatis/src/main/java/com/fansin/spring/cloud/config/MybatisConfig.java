@@ -19,12 +19,22 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import javax.sql.DataSource;
 
+/**
+ * The type Mybatis config.
+ */
 @Configuration
 @MapperScan(basePackages = "com.fansin.spring.cloud.mybatis",sqlSessionFactoryRef = "sqlSessionFactory",sqlSessionTemplateRef = "sqlSessionTemplate")
 public class MybatisConfig {
 
     private String RESOURCE_PATH = "classpath*:mapper/**/*.xml";
 
+    /**
+     * Sql session factory sql session factory.
+     *
+     * @param dataSource the data source
+     * @return the sql session factory
+     * @throws Exception the exception
+     */
     @Bean
     public SqlSessionFactory sqlSessionFactory(@Qualifier("dataSource") DataSource dataSource) throws Exception {
         SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
@@ -33,6 +43,13 @@ public class MybatisConfig {
         return factoryBean.getObject();
     }
 
+    /**
+     * Sql session template sql session template.
+     *
+     * @param dataSource the data source
+     * @return the sql session template
+     * @throws Exception the exception
+     */
     @Bean
     public SqlSessionTemplate sqlSessionTemplate(@Qualifier("dataSource") DataSource dataSource) throws Exception {
         SqlSessionTemplate template = new SqlSessionTemplate(sqlSessionFactory(dataSource));
