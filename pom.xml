@@ -14,7 +14,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.9.RELEASE</version>
+		<version>1.5.10.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -29,6 +29,8 @@
         <module>sleuth-zipkin</module>
         <module>springboot-admin</module>
 		<module>mybatis</module>
+		<module>web-session</module>
+		<module>jta-atomikos</module>
 	</modules>
 
 	<properties>
@@ -36,6 +38,13 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<spring-cloud.version>Edgware.RELEASE</spring-cloud.version>
 		<java.version>1.8</java.version>
+		<lombok.version>1.16.20</lombok.version>
+		<druid-spring-boot-starter.version>1.1.8</druid-spring-boot-starter.version>
+		<mybatis-spring-boot-starter.version>1.3.1</mybatis-spring-boot-starter.version>
+		<mybatis-generator-maven-plugin.version>1.3.5</mybatis-generator-maven-plugin.version>
+		<hutool-all.version>4.0.1</hutool-all.version>
+		<compiler.source.version>1.8</compiler.source.version>
+		<compiler.target.version>${compiler.source.version}</compiler.target.version>
 	</properties>
 
     <!--所有模块都依赖-->
@@ -74,20 +83,27 @@
 			<dependency>
 				<groupId>org.projectlombok</groupId>
 				<artifactId>lombok</artifactId>
-				<version>1.16.14</version>
+				<version>${lombok.version}</version>
 			</dependency>
             <!--tool-->
 			<dependency>
-				<groupId>com.xiaoleilu</groupId>
+				<groupId>cn.hutool</groupId>
 				<artifactId>hutool-all</artifactId>
-				<version>3.0.6</version>
+				<version>${hutool-all.version}</version>
 			</dependency>
-
 		</dependencies>
 	</dependencyManagement>
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${compiler.source.version}</source>
+					<target>${compiler.target.version}</target>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -100,6 +116,19 @@
                     </execution>
                 </executions>
             </plugin>
+			<!--<plugin>-->
+				<!--<groupId>org.mapper.generator</groupId>-->
+				<!--<artifactId>mapper-generator-maven-plugin</artifactId>-->
+				<!--<version>${mapper-generator-maven-plugin.version}</version>-->
+				<!--<executions>-->
+					<!--<execution>-->
+						<!--<id>Generate MyBatis Artifacts</id>-->
+						<!--<goals>-->
+							<!--<goal>generate</goal>-->
+						<!--</goals>-->
+					<!--</execution>-->
+				<!--</executions>-->
+			<!--</plugin>-->
 		</plugins>
 	</build>
 

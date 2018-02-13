@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fansin.spring.cloud.jta.mybatis.consumer.mapper.base.ConsumerBaseMapper">
+
+
+    <insert id="insertConsumer" >
+        INSERT INTO consumer
+        (
+        <trim suffixOverrides=",">
+                    <if test="id!=null">
+                        `id`,
+                    </if>
+                    <if test="name!=null">
+                        `name`,
+                    </if>
+                    <if test="recv_time!=null">
+                        `recv_time`,
+                    </if>
+                    <if test="result!=null">
+                        `result`,
+                    </if>
+        </trim>
+        )
+        VALUES
+        (
+        <trim suffixOverrides=",">
+                <if test="id!=null">
+                    #{id},
+                </if>
+                <if test="name!=null">
+                    #{name},
+                </if>
+                <if test="recv_time!=null">
+                    #{recv_time},
+                </if>
+                <if test="result!=null">
+                    #{result},
+                </if>
+        </trim>
+        );
+    </insert>
+
+
+    <update id="updateConsumer">
+        UPDATE consumer
+        SET
+        <trim suffixOverrides=",">
+            <if test="name != null and name!=''">
+                `name` = #{name},
+            </if>
+            <if test="recv_time != null">
+                `recv_time` = #{recv_time},
+            </if>
+            <if test="result != null">
+                `result` = #{result},
+            </if>
+        </trim>
+        WHERE
+        <trim suffixOverrides="and">
+                `id` = #{id} and
+        </trim>
+    </update>
+
+
+    <select id="queryConsumer" resultType="com.fansin.spring.cloud.jta.mybatis.consumer.entity.Consumer">
+        select
+        <include refid="baseResult"></include>
+        from  consumer
+        <trim prefix="where" suffixOverrides="and | or">
+            <if test="id != null">
+                `id` = #{id} and
+            </if>
+            <if test="name != null and name!=''">
+                `name` = #{name} and
+            </if>
+            <if test="recv_time != null">
+                `recv_time` = #{recv_time} and
+            </if>
+            <if test="result != null">
+                `result` = #{result} and
+            </if>
+            <if test = "(_parameter instanceof com.fansin.spring.cloud.jta.mapper.consumer.entity.Consumer$QueryBuilder) == true">
+                <if test="idList != null">
+                    `id` in
+                    <foreach collection="idList" close=")" open="(" separator="," item="item">
+                        #{item}
+                    </foreach> and
+                </if>
+                <if test="nameList != null">
+                    `name` in
+                    <foreach collection="nameList" close=")" open="(" separator="," item="item">
+                        #{item}
+                    </foreach> and
+                </if>
+                <if test ="fuzzyName!=null and fuzzyName.size()>0">
+                    (
+                    <foreach collection="fuzzyName"  separator="or" item="item">
+                        `Name` like concat('%',#{item},'%')
+                    </foreach>
+                    ) and
+                </if>
+                <if test ="rightFuzzyName!=null and rightFuzzyName.size()>0">
+                    (
+                    <foreach collection="rightFuzzyName"  separator="or" item="item">
+                        `Name` like concat(#{item},'%')
+                    </foreach>
+                    ) and
+                </if>
+                <if test="recv_timeList != null">
+                    `recv_time` in
+                    <foreach collection="recv_timeList" close=")" open="(" separator="," item="item">
+                        #{item}
+                    </foreach> and
+                </if>
+                <if test="recv_timeSt !=null and recv_timeEd!=null">
+                    (`recv_time` >= #{recv_timeSt} and `recv_time` &lt; #{recv_timeEd}) and
+                </if>
+                <if test="resultList != null">
+                    `result` in
+                    <foreach collection="resultList" close=")" open="(" separator="," item="item">
+                        #{item}
+                    </foreach> and
+                </if>
+            </if>
+        </trim>
+    </select>
+
+    <select id="queryConsumerLimit1" resultType="com.fansin.spring.cloud.jta.mybatis.consumer.entity.Consumer">
+        select
+        <include refid="baseResult"></include>
+        from  consumer
+        <trim prefix="where" suffixOverrides="and | or">
+            <if test="id != null">
+                `id` = #{id} and
+            </if>
+            <if test="name != null and name!=''">
+                `name` = #{name} and
+            </if>
+            <if test="recv_time != null">
+                `recv_time` = #{recv_time} and
+            </if>
+            <if test="result != null">
+                `result` = #{result} and
+            </if>
+            <if test = "(_parameter instanceof com.fansin.spring.cloud.jta.mapper.consumer.entity.Consumer$QueryBuilder) == true">
+                <if test="idList != null">
+                    `id` in
+                    <foreach collection="idList" close=")" open="(" separator="," item="item">
+                        #{item}
+                    </foreach> and
+                </if>
+                <if test="nameList != null">
+                    `name` in
+                    <foreach collection="nameList" close=")" open="(" separator="," item="item">
+                        #{item}
+                    </foreach> and
+                </if>
+                <if test="recv_timeList != null">
+                    `recv_time` in
+                    <foreach collection="recv_timeList" close=")" open="(" separator="," item="item">
+                        #{item}
+                    </foreach> and
+                </if>
+            <if test="recv_timeSt !=null and recv_timeEd!=null">
+                (`recv_time` >= #{recv_timeSt} and `recv_time` &lt; #{recv_timeEd}) and
+            </if>
+                <if test="resultList != null">
+                    `result` in
+                    <foreach collection="resultList" close=")" open="(" separator="," item="item">
+                        #{item}
+                    </foreach> and
+                </if>
+            </if>
+        </trim>
+        limit 1
+    </select>
+
+    <sql id="baseResult">
+        <trim suffixOverrides=",">
+            <if test = "(_parameter instanceof com.fansin.spring.cloud.jta.mapper.consumer.entity.Consumer$QueryBuilder) == true">
+
+                <if test="fetchFields==null">
+                    *,
+                </if>
+                <if test="fetchFields!=null">
+                    <if test="fetchFields.AllFields !=null">
+                        *,
+                    </if>
+                    <if test="fetchFields.AllFields ==null and fetchFields.fetchFields==null and fetchFields.excludeFields==null and fetchFields.otherFields==null">
+                        *,
+                    </if>
+                    <if test="fetchFields.AllFields==null and fetchFields.fetchFields!=null">
+                    <if test="fetchFields.fetchFields.id==true">
+                        `id`,
+                    </if>
+                    <if test="fetchFields.fetchFields.name==true">
+                        `name`,
+                    </if>
+                    <if test="fetchFields.fetchFields.recv_time==true">
+                        `recv_time`,
+                    </if>
+                    <if test="fetchFields.fetchFields.result==true">
+                        `result`,
+                    </if>
+                    </if>
+                    <if test="fetchFields.AllFields==null and fetchFields.excludeFields!=null">
+                    <if test="fetchFields.excludeFields.id==null">
+                        `id`,
+                    </if>
+                    <if test="fetchFields.excludeFields.name==null">
+                        `name`,
+                    </if>
+                    <if test="fetchFields.excludeFields.recv_time==null">
+                        `recv_time`,
+                    </if>
+                    <if test="fetchFields.excludeFields.result==null">
+                        `result`,
+                    </if>
+                    </if>
+                    <if test="fetchFields.otherFields!=null and fetchFields.otherFields.size>0">
+                        <foreach collection="fetchFields.otherFields" index="index" item="item" separator=",">
+                        `#{item}`
+                        </foreach>
+                    </if>
+                </if>
+            </if>
+            <if test="(_parameter instanceof com.fansin.spring.cloud.jta.mapper.consumer.entity.Consumer$QueryBuilder) == false" >
+                *,
+            </if>
+
+        </trim>
+    </sql>
+
+</mapper>

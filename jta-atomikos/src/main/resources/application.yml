@@ -1,0 +1,147 @@
+spring:
+  jta:
+    atomikos:
+      properties:
+#      为了保证唯一性最好跟系统相关 System.properties
+        transaction-manager-unique-name: "atomikos-tx-manager"
+        max-timeout: 300000
+        default-jta-timeout: 10000
+        max-actives: 50
+        enable-logging: true
+        serial-jta-transactions: true
+        log-base-name: "tmlog"
+        log-base-dir: .
+        console-log-level: trace
+        checkpoint-interval: 500
+        threaded-two-phase-commit: true
+        force-shutdown-on-vm-exit: true
+        service: "com.atomikos.icatch.standalone.UserTransactionServiceFactory"
+#      数据源
+#      datasource:
+#        borrow-connection-timeout: 30
+##      为了保证唯一性最好跟系统相关 System.properties
+#        unique-resource-name: "atomikos-resource"
+##       默认设置取决于驱动提供商
+#        default-isolation-level: -1
+##        获取连接池超时时间
+#        login-timeout: 30
+##       连接回收时间
+#        maintenance-interval: 60
+##       最大获取数据超时时间 (0 无限时间)
+#        reap-timeout: 0
+##       最大空闲时间(如果资源紧张,超过这个时间,连接就会被收回)
+#        max-idle-time: 60
+##       连接声明周期(0 直至销毁 )
+#        max-lifetime: 1800
+##       连接池大小
+#        max-pool-size: 10
+#        min-pool-size: 3
+##
+#        test-query: "SELECT 1"
+#        xa-data-source-class-name: org.springframework.boot.jta.atomikos.AtomikosDataSourceBean
+#        xa-properties:
+#          url: jdbc:mysql://172.16.11.5:3306/consumer
+#          user: root
+#          password: root
+#          minPoolSize: 3
+#          maxPoolSize: 10
+#          maxLifetime: 30000
+#          borrowConnectionTimeout: 30
+#          loginTimeout: 30
+#          maintenanceInterval: 60
+#          maxIdleTime: 60
+#          testQuery: "SELECT 1"
+#      connectionfactory:
+#        max-lifetime: 0
+#        borrow-connection-timeout: 30
+#        min-pool-size: 3
+#        max-pool-size: 20
+#        maintenance-interval: 60
+#        max-idle-time: 60
+#        reap-timeout: 10
+#        unique-resource-name: "atomikos-factory-resource"
+    enabled: true
+#    多数据源
+  datasource:
+#  主数据源
+    primary:
+      name: one
+      generate-unique-name: false
+      type: com.mysql.jdbc.jdbc2.optional.MysqlXADataSource
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://172.16.0.4:3306/publisher?characterEncoding=utf8&useSSL=true
+#      登录用户
+      username: root
+      password: root
+      continue-on-error: false
+##      dml ddl相关设置
+##      dml用户
+#      data:
+#      data-username: root
+#      data-password: root
+##      ddl用户
+#      schema: publisher
+#      schema-username: root
+#      schema-password: root
+##      默认执行 data.sql
+#      initialize: true
+##      其他默认值
+#      platform: "all"
+#      separator: ";"
+#      sql-script-encoding: utf-8
+#      xa:
+#        data-source-class-name: com.mysql.jdbc.jdbc2.optional.MysqlXADataSource
+#        properties:
+#          properties:
+#            url: jdbc:mysql://172.16.0.4:3306/publisher?characterEncoding=utf8&useSSL=true
+#            user: root
+#            password: root
+#            minPoolSize: 3
+#            maxPoolSize: 10
+#            maxLifetime: 30000
+#            borrowConnectionTimeout: 30
+#            loginTimeout: 30
+#            maintenanceInterval: 60
+#            maxIdleTime: 60
+#            testQuery: "SELECT 1"
+#   次数据源
+    second:
+      name: two
+      generate-unique-name: false
+      driver-class-name: com.mysql.jdbc.Driver
+      type: com.mysql.jdbc.jdbc2.optional.MysqlXADataSource
+      url: jdbc:mysql://172.16.0.5:3306/consumer?characterEncoding=utf8&useSSL=true
+#      登录用户
+      username: root
+      password: root
+      continue-on-error: false
+##      dml ddl相关设置
+##      dml用户
+#      data:
+#      data-username: root
+#      data-password: root
+##      ddl用户
+#      schema: publisher
+#      schema-username: root
+#      schema-password: root
+##      默认执行 data.sql
+#      initialize: true
+##      其他默认值
+#      platform: "all"
+#      separator: ";"
+#      sql-script-encoding: utf-8
+#      xa:
+#        data-source-class-name: com.mysql.jdbc.jdbc2.optional.MysqlXADataSource
+#        properties:
+#          properties:
+#            url: jdbc:mysql://172.16.0.5:3306/consumer?characterEncoding=utf8&useSSL=true
+#            user: root
+#            password: root
+#            minPoolSize: 3
+#            maxPoolSize: 10
+#            maxLifetime: 30000
+#            borrowConnectionTimeout: 30
+#            loginTimeout: 30
+#            maintenanceInterval: 60
+#            maxIdleTime: 60
+#            testQuery: "SELECT 1"
