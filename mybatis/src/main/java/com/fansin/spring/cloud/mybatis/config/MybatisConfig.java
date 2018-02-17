@@ -1,4 +1,4 @@
-package com.fansin.spring.cloud.config;
+package com.fansin.spring.cloud.mybatis.config;
 
 /**
  * Created with IntelliJ IDEA.
