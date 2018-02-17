@@ -4,11 +4,16 @@ import com.fansin.spring.cloud.jta.mybatis.consumer.entity.Consumer;
 import com.fansin.spring.cloud.jta.mybatis.consumer.mapper.base.ConsumerBaseMapper;
 import com.fansin.spring.cloud.jta.mybatis.publisher.entity.Publisher;
 import com.fansin.spring.cloud.jta.mybatis.publisher.mapper.base.PublisherBaseMapper;
+import org.apache.activemq.command.ActiveMQQueue;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.annotation.JmsListener;
+import org.springframework.jms.core.JmsMessagingTemplate;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.jms.Queue;
 import javax.transaction.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -33,8 +38,15 @@ public class AtomikosController {
     @Autowired
     private PublisherBaseMapper publisherMapper;
 
+    @Autowired
+    private JmsMessagingTemplate jmsMessagingTemplate;
+
+    private String QUEUE_NAME = "sample.queue";
+
     /**
      * Atomikos string.
+     *
+     * 多个数据源同时成功或同时失败
      *
      * @return the string
      */
@@ -44,6 +56,7 @@ public class AtomikosController {
         try {
             TransactionManager transactionManager = jtaTransactionManager.getTransactionManager();
             transactionManager.begin();
+            //第一个 第一db数据源
             System.out.println("分布式事务开始....");
             Publisher publisher = new Publisher();
             publisher.setName("first send");
@@ -52,7 +65,11 @@ public class AtomikosController {
             publisherMapper.insertPublisher(publisher);
             System.out.println("插入publisher成功！");
 
+            //第二个 mq数据源
+            System.out.println("发送jms消息");
+            jmsMessagingTemplate.convertAndSend(new ActiveMQQueue(QUEUE_NAME),"publisher写入成功！");
 
+            //第三个 第二db数据源
             Consumer consumer = new Consumer();
             //这里设置了主键，所以只能插入一次，第二次插入将会报错
             consumer.setId(BigDecimal.valueOf(100));
@@ -61,6 +78,7 @@ public class AtomikosController {
             consumer.setResult(1);
             consumerMapper.insertConsumer(consumer);
             System.out.println("插入consumer成功！");
+
 
             transactionManager.commit();
             System.out.println("分布式事务提交....");
@@ -76,6 +94,17 @@ public class AtomikosController {
             e.printStackTrace();
         }
         return "successful";
+    }
+
+
+    /**
+     * 监听队列 队列名称看
+     * @see AtomikosController#QUEUE_NAME
+     * @param payload
+     */
+    @JmsListener(destination = "sample.queue")
+    public void receiveQueue(String payload){
+        System.out.println("payload = " + payload);
     }
 
 }

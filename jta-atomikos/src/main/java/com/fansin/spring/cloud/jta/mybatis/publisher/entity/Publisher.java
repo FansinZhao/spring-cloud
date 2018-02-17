@@ -1,5 +1,6 @@
 package com.fansin.spring.cloud.jta.mybatis.publisher.entity;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +11,7 @@ import java.util.List;
  *
  * @author author
  */
-public class Publisher {
+public class Publisher implements Serializable{
 
 
     /**

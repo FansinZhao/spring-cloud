@@ -1,4 +1,4 @@
-package com.fansin.spring.cloud.jta.datasource;
+package com.fansin.spring.cloud.jta.mybatis.datasource;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlXADataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -27,10 +27,10 @@ import javax.sql.DataSource;
  */
 @EnableAutoConfiguration
 @Configuration
-@MapperScan(basePackages = "com.fansin.spring.cloud.jta.mybatis.publisher",sqlSessionFactoryRef = "primarySqlSessionFactory",sqlSessionTemplateRef = "primarySqlSessionTemplate")
+@MapperScan(basePackages = "com.**.mybatis.publisher",sqlSessionFactoryRef = "primarySqlSessionFactory",sqlSessionTemplateRef = "primarySqlSessionTemplate")
 public class PrimaryMybatisDataSourceConfig {
 
-    private String RESOURCE_PATH = "classpath*:mapper/publisher/**/*.xml";
+    private String resourcePath = "classpath*:mybatis/publisher/**/*.xml";
 
 
     /**
@@ -92,7 +92,7 @@ public class PrimaryMybatisDataSourceConfig {
     public SqlSessionFactory primarySqlSessionFactory(@Qualifier("primaryDataSource") DataSource dataSource) throws Exception {
         SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
         factoryBean.setDataSource(dataSource);
-        factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(RESOURCE_PATH));
+        factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(resourcePath));
         return factoryBean.getObject();
     }
 

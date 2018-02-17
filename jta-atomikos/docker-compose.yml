@@ -20,6 +20,16 @@ services:
         ipv4_address: 172.16.0.5
     volumes:
           - /home/fansin/IdeaProjects/spring-cloud/jta-atomikos/src/main/resources/sql/consumer.sql:/docker-entrypoint-initdb.d/consumer.sql
+  springcloud-activemq:
+    image: webcenter/activemq:latest
+    environment:
+      ACTIVEMQ_ADMIN_LOGIN: admin
+      ACTIVEMQ_ADMIN_PASSWORD: admin
+      ACTIVEMQ_JMX_X_ROLE: admin
+      ACTIVEMQ_JMX_X_PASSWORD: admin
+    networks:
+          network:
+            ipv4_address: 172.16.0.6
 
 volumes:
   consumer:

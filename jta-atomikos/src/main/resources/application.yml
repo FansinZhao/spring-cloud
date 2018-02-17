@@ -17,27 +17,27 @@ spring:
         force-shutdown-on-vm-exit: true
         service: "com.atomikos.icatch.standalone.UserTransactionServiceFactory"
 #      数据源
-#      datasource:
-#        borrow-connection-timeout: 30
-##      为了保证唯一性最好跟系统相关 System.properties
+      datasource:
+        borrow-connection-timeout: 30
+#      为了保证唯一性最好跟系统相关 System.properties
 #        unique-resource-name: "atomikos-resource"
-##       默认设置取决于驱动提供商
-#        default-isolation-level: -1
-##        获取连接池超时时间
-#        login-timeout: 30
-##       连接回收时间
-#        maintenance-interval: 60
-##       最大获取数据超时时间 (0 无限时间)
-#        reap-timeout: 0
-##       最大空闲时间(如果资源紧张,超过这个时间,连接就会被收回)
-#        max-idle-time: 60
-##       连接声明周期(0 直至销毁 )
-#        max-lifetime: 1800
-##       连接池大小
-#        max-pool-size: 10
-#        min-pool-size: 3
-##
-#        test-query: "SELECT 1"
+#       默认设置取决于驱动提供商
+        default-isolation-level: -1
+#        获取连接池超时时间
+        login-timeout: 30
+#       连接回收时间
+        maintenance-interval: 60
+#       最大获取数据超时时间 (0 无限时间)
+        reap-timeout: 0
+#       最大空闲时间(如果资源紧张,超过这个时间,连接就会被收回)
+        max-idle-time: 60
+#       连接声明周期(0 直至销毁 )
+        max-lifetime: 1800
+#       连接池大小
+        max-pool-size: 10
+        min-pool-size: 3
+#
+        test-query: "SELECT 1"
 #        xa-data-source-class-name: org.springframework.boot.jta.atomikos.AtomikosDataSourceBean
 #        xa-properties:
 #          url: jdbc:mysql://172.16.11.5:3306/consumer
@@ -51,16 +51,23 @@ spring:
 #          maintenanceInterval: 60
 #          maxIdleTime: 60
 #          testQuery: "SELECT 1"
-#      connectionfactory:
-#        max-lifetime: 0
-#        borrow-connection-timeout: 30
-#        min-pool-size: 3
-#        max-pool-size: 20
-#        maintenance-interval: 60
-#        max-idle-time: 60
-#        reap-timeout: 10
-#        unique-resource-name: "atomikos-factory-resource"
+# jms
+      connectionfactory:
+        max-lifetime: 0
+        borrow-connection-timeout: 30
+        min-pool-size: 3
+        max-pool-size: 20
+        maintenance-interval: 60
+        max-idle-time: 60
+        reap-timeout: 10
+        unique-resource-name: "atomikos-factory-resource"
+        xa-connection-factory-class-name: org.apache.activemq.spring.ActiveMQXAConnectionFactory
+#        xa-properties:
+#          brokerURL: tcp://172.16.0.6:61616
+#          userName: admin
+#          password: admin
     enabled: true
+
 #    多数据源
   datasource:
 #  主数据源
@@ -115,6 +122,16 @@ spring:
       username: root
       password: root
       continue-on-error: false
+# activemq
+  activemq:
+    broker-url: tcp://172.16.0.6:61616
+    user: admin
+    password: admin
+    pool:
+#    xa  必须设置为 true
+      enabled: true
+      max-connections: 50
+
 ##      dml ddl相关设置
 ##      dml用户
 #      data:

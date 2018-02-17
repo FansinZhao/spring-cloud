@@ -1,4 +1,4 @@
-package com.fansin.spring.cloud.jta.datasource;
+package com.fansin.spring.cloud.jta.mybatis.datasource;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlXADataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -25,10 +25,10 @@ import javax.sql.DataSource;
  */
 @EnableAutoConfiguration
 @Configuration
-@MapperScan(basePackages = "com.fansin.spring.cloud.jta.mybatis.consumer.mapper",sqlSessionFactoryRef = "secondSqlSessionFactory",sqlSessionTemplateRef = "secondSqlSessionTemplate")
+@MapperScan(basePackages = "com.**.mybatis.consumer",sqlSessionFactoryRef = "secondSqlSessionFactory",sqlSessionTemplateRef = "secondSqlSessionTemplate")
 public class SecondMybatisDataSourceConfig {
 
-    private String RESOURCE_PATH = "classpath*:mapper/consumer/**/*.xml";
+    private String RESOURCE_PATH = "classpath*:mybatis/consumer/**/*.xml";
 
     /**
      * Second data source properties data source properties.

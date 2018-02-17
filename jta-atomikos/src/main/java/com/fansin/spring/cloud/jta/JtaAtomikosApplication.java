@@ -2,7 +2,7 @@ package com.fansin.spring.cloud.jta;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.jms.annotation.EnableJms;
 
 /**
  * 配置方式
@@ -16,6 +16,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
  * @see org.springframework.boot.autoconfigure.transaction.jta.AtomikosJtaConfiguration
  */
 @SpringBootApplication
+@EnableJms
 public class JtaAtomikosApplication {
 
     /**
