@@ -20,13 +20,17 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import javax.sql.DataSource;
 
 /**
- * The type Mybatis config.
+ * Created with IntelliJ IDEA.
+ *
+ * @author fansin
+ * @version 1.0
+ * @date 18 -2-1 上午8:54
  */
 @Configuration
-@MapperScan(basePackages = "com.fansin.spring.cloud.mybatis",sqlSessionFactoryRef = "sqlSessionFactory",sqlSessionTemplateRef = "sqlSessionTemplate")
+@MapperScan(basePackages = "com.**.mybatis",sqlSessionFactoryRef = "sqlSessionFactory",sqlSessionTemplateRef = "sqlSessionTemplate")
 public class MybatisConfig {
 
-    private String RESOURCE_PATH = "classpath*:mapper/**/*.xml";
+    private String resourcePath = "classpath*:mapper/**/*.xml";
 
     /**
      * Sql session factory sql session factory.
@@ -39,7 +43,7 @@ public class MybatisConfig {
     public SqlSessionFactory sqlSessionFactory(@Qualifier("dataSource") DataSource dataSource) throws Exception {
         SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
         factoryBean.setDataSource(dataSource);
-        factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(RESOURCE_PATH));
+        factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(resourcePath));
         return factoryBean.getObject();
     }
 
