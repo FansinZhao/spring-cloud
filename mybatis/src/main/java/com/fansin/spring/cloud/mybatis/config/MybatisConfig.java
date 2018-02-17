@@ -30,7 +30,7 @@ import javax.sql.DataSource;
 @MapperScan(basePackages = "com.**.mybatis",sqlSessionFactoryRef = "sqlSessionFactory",sqlSessionTemplateRef = "sqlSessionTemplate")
 public class MybatisConfig {
 
-    private String resourcePath = "classpath*:mapper/**/*.xml";
+    private String resourcePath = "classpath*:mybatis/**/*.xml";
 
     /**
      * Sql session factory sql session factory.
