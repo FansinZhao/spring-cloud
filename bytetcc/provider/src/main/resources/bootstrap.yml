@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: BYTETCC-PROVIDER
+
+info:
+  component: Discovery Server ${spring.application.name}

@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: BYTETCC-EUREKA-SERVER
+info:
+  component: Discovery Server ${spring.application.name}

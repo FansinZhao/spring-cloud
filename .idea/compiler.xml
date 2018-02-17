@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="app" />
+        <module name="bus-amqp" />
+        <module name="bus-kafka" />
+        <module name="config" />
+        <module name="discovery" />
+        <module name="router" />
+        <module name="security" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="app" target="1.8" />
+      <module name="bus-amqp" target="1.8" />
+      <module name="bus-kafka" target="1.8" />
+      <module name="cloud" target="1.8" />
+      <module name="config" target="1.8" />
+      <module name="discovery" target="1.8" />
+      <module name="router" target="1.8" />
+      <module name="security" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
