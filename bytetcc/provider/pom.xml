@@ -33,11 +33,6 @@
 			<artifactId>bytejta-supports</artifactId>
 			<version>RELEASE</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-dbcp2</artifactId>
-			<version>RELEASE</version>
-		</dependency>
 		<!--mysql-->
 		<dependency>
 			<groupId>mysql</groupId>

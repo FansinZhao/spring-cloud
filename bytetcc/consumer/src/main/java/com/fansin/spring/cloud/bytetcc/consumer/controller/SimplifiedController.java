@@ -27,6 +27,14 @@ public class SimplifiedController implements ITransferService {
 	@Autowired
 	private IAccountService acctService;
 
+	/**
+	 *
+	 * curl -d 'sourceAcctId=1001&targetAcctId=2001&amount=100' http://127.0.0.1:8763/simplified/transfer
+	 *
+	 * @param sourceAcctId the source acct id
+	 * @param targetAcctId the target acct id
+	 * @param amount       the amount
+	 */
 	@Override
 	@ResponseBody
 	@RequestMapping(value = "/simplified/transfer", method = RequestMethod.POST)

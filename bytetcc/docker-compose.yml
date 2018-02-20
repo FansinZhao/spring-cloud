@@ -1,0 +1,39 @@
+# 启动基础应用
+version: '3.5'
+services:
+  springcloud-mariadb-provider:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      network:
+        ipv4_address: 172.16.0.4
+    volumes:
+      - /home/fansin/IdeaProjects/spring-cloud/bytetcc/provider/src/main/resources/sql/ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
+
+  springcloud-mariadb-consumer:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      network:
+        ipv4_address: 172.16.0.5
+    volumes:
+          - /home/fansin/IdeaProjects/spring-cloud/bytetcc/consumer/src/main/resources/sql/ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
+volumes:
+  consumer:
+  publisher:
+
+networks:
+  network:
+    name: springcloud_net
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      -
+        subnet: 172.16.0.0/16
+#networks:
+#  default:
+#    external:
+#      name: springcloud_net

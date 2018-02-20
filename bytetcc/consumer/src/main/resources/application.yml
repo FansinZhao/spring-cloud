@@ -10,3 +10,28 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://127.0.0.1:8761/eureka/
+# datasource
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://172.16.0.5:3306/consumer
+    username: root
+    password: root
+    continue-on-error: false
+    tomcat:
+      max-active: 50
+      initial-size: 20
+      min-idle: 6
+#      记录abandoned信息
+      log-abandoned: true
+      remove-abandoned: true
+      remove-abandoned-timeout: 1800
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-connect: false
+      test-on-return: false
+      validation-query: "select 'x' "
+      validation-query-timeout: 1
+      log-validation-errors: true
+      time-between-eviction-runs-millis: 30000
+      num-tests-per-eviction-run: 20
