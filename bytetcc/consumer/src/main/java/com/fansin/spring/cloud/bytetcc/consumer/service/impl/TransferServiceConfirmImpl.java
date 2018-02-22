@@ -2,17 +2,22 @@ package com.fansin.spring.cloud.bytetcc.consumer.service.impl;
 
 import com.fansin.spring.cloud.bytetcc.consumer.mybatis.mapper.TransferMapper;
 import com.fansin.spring.cloud.bytetcc.consumer.service.ITransferService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 /**
- * The type Transfer service cancel.
+ * Created with IntelliJ IDEA.
+ *
+ * @author fansin
+ * @version 1.0
+ * @date 18-2-21 下午23:51
  */
-@Service("transferServiceCancel")
-public class TransferServiceCancel implements ITransferService {
-
+@Service("transferServiceConfirm")
+@Slf4j
+public class TransferServiceConfirmImpl implements ITransferService {
 	@Autowired
 	private TransferMapper transferMapper;
 
@@ -24,13 +29,13 @@ public class TransferServiceCancel implements ITransferService {
 	 * @param amount       the amount
 	 */
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public void transfer(String sourceAcctId, String targetAcctId, double amount) {
-		int value = this.transferMapper.cancelIncrease(targetAcctId, amount);
+		int value = this.transferMapper.confirmIncrease(targetAcctId, amount);
 		if (value != 1) {
 			throw new IllegalStateException("ERROR!");
 		}
-		System.out.printf("exec decrease: acct= %s, amount= %7.2f%n", targetAcctId, amount);
+		log.info("[confirm] done increase: sourceAcct={}, acct= {}, amount= {}\n",sourceAcctId, targetAcctId, amount);
 	}
 
 }

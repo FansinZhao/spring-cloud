@@ -7,7 +7,11 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.ImportResource;
 
 /**
- * The type Consumer application.
+ * Created with IntelliJ IDEA.
+ *
+ * @author fansin
+ * @version 1.0
+ * @date 18-2-21 下午23:51
  */
 @ImportResource({ "classpath:bytetcc-supports-springcloud.xml" })
 @EnableFeignClients

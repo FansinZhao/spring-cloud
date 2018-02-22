@@ -8,9 +8,33 @@
 	]]>
 	</update>
 
+	<update id="confirmDecreaseAmount">
+		<![CDATA[
+		update tb_account_one set frozen = frozen - #{amount} where acct_id = #{acctId}
+	]]>
+	</update>
+
+	<update id="cancelDecreaseAmount">
+		<![CDATA[
+		update tb_account_one set amount = amount + #{amount}, frozen = frozen - #{amount} where acct_id = #{acctId}
+	]]>
+	</update>
+
 	<update id="increaseAmount">
 	<![CDATA[
-		update tb_account_two set frozen = frozen + #{amount} where acct_id = #{acctId}
+		update tb_account_one set frozen = frozen + #{amount} where acct_id = #{acctId}
+	]]>
+	</update>
+
+	<update id="confirmIncreaseAmount">
+		<![CDATA[
+		update tb_account_one set amount = amount + #{amount}, frozen = frozen - #{amount} where acct_id = #{acctId}
+	]]>
+	</update>
+
+	<update id="cancelIncreaseAmount">
+	<![CDATA[
+		update tb_account_one set frozen = frozen - #{amount} where acct_id = #{acctId}
 	]]>
 	</update>
 

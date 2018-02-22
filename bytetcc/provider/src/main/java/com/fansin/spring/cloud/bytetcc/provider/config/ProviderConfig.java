@@ -11,7 +11,11 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 
 /**
- * The type Provider config.
+ * Created with IntelliJ IDEA.
+ *
+ * @author fansin
+ * @version 1.0
+ * @date 18-2-21 下午23:51
  */
 @Import(SpringCloudConfiguration.class)
 @Configuration
