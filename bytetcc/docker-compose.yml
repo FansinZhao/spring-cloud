@@ -1,6 +1,7 @@
 # 启动基础应用
 version: '3.5'
 services:
+#  db数据库
   springcloud-mariadb-provider:
     image: mariadb
     environment:
@@ -8,8 +9,9 @@ services:
     networks:
       network:
         ipv4_address: 172.16.0.4
+#TODO   目前没有发现更简洁的配置方式,需要修改为自己的绝对路径
     volumes:
-      - /home/fansin/IdeaProjects/spring-cloud/bytetcc/provider/src/main/resources/sql/ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
+      - ${PROJECT_HOME}/provider/src/main/resources/sql/ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
 
   springcloud-mariadb-consumer:
     image: mariadb
@@ -18,8 +20,29 @@ services:
     networks:
       network:
         ipv4_address: 172.16.0.5
+#TODO   目前没有发现更简洁的配置方式,需要修改为自己的绝对路径
     volumes:
-          - /home/fansin/IdeaProjects/spring-cloud/bytetcc/consumer/src/main/resources/sql/ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
+          - ${PROJECT_HOME}/consumer/src/main/resources/sql/ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
+
+#TODO (需要先将 provider和consumer中的application.yml的spring.profiles.active=docker,然后mvn clean install) 将app部署到docker容器中,需要资源较多,运行前注意保存重要编辑文件
+#  springcloud-bytetcc-eurekaserver:
+#    image: springcloud/bytetcc/eureka-server:${VERSION}
+#    networks:
+#          network:
+#            ipv4_address: 172.16.0.6
+#
+#  springcloud-bytetcc-provider:
+#      image: springcloud/bytetcc/provider:${VERSION}
+#      networks:
+#            network:
+#              ipv4_address: 172.16.0.7
+#
+#  springcloud-bytetcc-consumer:
+#      image: springcloud/bytetcc/consumer:${VERSION}
+#      networks:
+#            network:
+#              ipv4_address: 172.16.0.8
+
 volumes:
   consumer:
   publisher:

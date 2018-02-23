@@ -35,6 +35,7 @@ public class TransferController implements ITransferService {
 	/**
 	 * Transfer.
 	 *
+	 * [standalone]
 	 * try-confirm:
 	 *
 	 * curl -d 'sourceAcctId=1001&targetAcctId=2001&amount=100' http://127.0.0.1:8763/transfer
@@ -42,6 +43,15 @@ public class TransferController implements ITransferService {
 	 * try-cancel:(故意将targetAcctId修改为不存在值,更新结果为-1,抛出异常,这时会调用[!provider]服务的cancel)
 	 *
 	 * curl -d 'sourceAcctId=1001&targetAcctId=3001&amount=100' http://127.0.0.1:8763/transfer
+	 *
+	 * [docker]
+	 * try-confirm:
+	 *
+	 * curl -d 'sourceAcctId=1001&targetAcctId=2001&amount=100' http://172.16.0.8:8763/transfer
+	 *
+	 * try-cancel:(故意将targetAcctId修改为不存在值,更新结果为-1,抛出异常,这时会调用[!provider]服务的cancel)
+	 *
+	 * curl -d 'sourceAcctId=1001&targetAcctId=3001&amount=100' http://172.16.0.8:8763/transfer
 	 *
 	 *
 	 * @param sourceAcctId the source acct id

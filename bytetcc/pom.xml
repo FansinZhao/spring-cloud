@@ -31,11 +31,14 @@
 		<java.version>1.8</java.version>
 		<spring-cloud.version>Edgware.SR2</spring-cloud.version>
 		<bytetcc.version>0.4.5</bytetcc.version>
+		<bytetcc-supports.version>0.4.2</bytetcc-supports.version>
 		<java.version>1.8</java.version>
 		<lombok.version>1.16.20</lombok.version>
 		<hutool-all.version>4.0.1</hutool-all.version>
 		<compiler.source.version>1.8</compiler.source.version>
 		<compiler.target.version>${compiler.source.version}</compiler.target.version>
+		<mybatis-spring-boot-starter.version>1.3.1</mybatis-spring-boot-starter.version>
+		<dockerfile-maven-version>1.3.7</dockerfile-maven-version>
 	</properties>
 
     <!--所有模块都依赖-->
@@ -90,6 +93,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
+					<skip>true</skip>
 					<source>${compiler.source.version}</source>
 					<target>${compiler.target.version}</target>
 				</configuration>

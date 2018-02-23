@@ -37,12 +37,23 @@ public class SimplifiedController implements ITransferService {
 	private IAccountService acctService;
 
 	/**
+	 * [standalone]
 	 * try-confirm:
 	 *
 	 * curl -d 'sourceAcctId=1001&targetAcctId=2001&amount=100' http://127.0.0.1:8763/simplified/transfer
 	 *
 	 * try-cancel:(故意将targetAcctId修改为不存在值,更新结果为-1,抛出异常,这时会调用[!provider]服务的cancel)
+	 *
 	 * curl -d 'sourceAcctId=1001&targetAcctId=3001&amount=100' http://127.0.0.1:8763/simplified/transfer
+	 *
+	 * [docker]
+	 * try-confirm:
+	 *
+	 * curl -d 'sourceAcctId=1001&targetAcctId=2001&amount=100' http://172.16.0.8:8763/simplified/transfer
+	 *
+	 * try-cancel:(故意将targetAcctId修改为不存在值,更新结果为-1,抛出异常,这时会调用[!provider]服务的cancel)
+	 *
+	 * curl -d 'sourceAcctId=1001&targetAcctId=3001&amount=100' http://172.16.0.8:8763/simplified/transfer
 	 *
 	 * @param sourceAcctId the source acct id
 	 * @param targetAcctId the target acct id
