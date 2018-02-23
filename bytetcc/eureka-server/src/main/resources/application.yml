@@ -9,3 +9,8 @@ eureka:
   server:
     enable-self-preservation: true
     eviction-interval-timer-in-ms: 0
+# 默认值保存在 additional-spring-configuration-metadata.json
+# 默认日志为logback,默认xml配置文件在org.springframework.boot.logging.logback 目录下面
+logging:
+  level: info
+  file: logs/${spring.application.name}.log
