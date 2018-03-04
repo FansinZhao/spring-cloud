@@ -6,7 +6,7 @@ management:
       enabled: false
 spring:
   rabbitmq:
-    addresses: 172.20.0.2:5672
+    addresses: 172.16.0.2:5672
     username: admin
     password: admin
   zipkin:
@@ -38,5 +38,13 @@ eureka:
       defaultZone: http://127.0.0.1:8761/eureka/,http://127.0.0.1:8762/eureka/
 #   客户端请求时间
     registry-fetch-interval-seconds: 5
-
+# 默认值保存在 additional-spring-configuration-metadata.json
+# 默认日志为logback,默认xml配置文件在org.springframework.boot.logging.logback 目录下面
+logging:
+  file: logs/${spring.application.name}.log
+# spring boot 2 变动点
+  level:
+    org.springframework: info
+    com.fansin.spring.cloud.sleuth: debug
+#  config: classpath:logback.xml
 

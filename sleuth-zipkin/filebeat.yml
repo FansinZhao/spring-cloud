@@ -1,0 +1,27 @@
+filebeat.config:
+  prospectors:
+    path: ${path.config}/prospectors.d/*.yml
+    reload.enabled: false
+  modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+
+processors:
+- add_cloud_metadata:
+
+#output.elasticsearch:
+#  hosts: ['elasticsearch:9200']
+#  username: elastic
+#  password: changeme
+#  worker: 1             #对应es的个数
+#  index: "filebeat"     #索引根名称 默认格式 "filebeat-%{[beat.version]}-%{+yyyy.MM.dd}"
+#  template:
+#    name: "filebeat"    #模板名字和对应的json文件
+#    path: "filebeat.template.json"
+#  max_retries: 3         #发送到特定logstash的最大尝试次数。如果达到该次数仍不成功，事件将被丢弃。默认是3，值0表示禁用重试。值小于0将无限重试知道事件已经发布。
+#
+#  bulk_max_size: 20000   #单个elasticsearch批量API索引请求的最大事件数。默认是50
+#  timeout: 90          #elasticsearch请求超时事件。默认90秒
+#  flush_interval: 5    #新事件两个批量API索引请求之间需要等待的秒数。如果bulk_max_size在该值之前到达，额外的批量索引请求生效。
+output.logstash:
+  hosts: ['logstash:5044']

@@ -1,20 +1,74 @@
 # 启动基础应用
-
-version: '3'
+version: '3.5'
 services:
   springcloud-rabbitmq:
     image: fansin/rabbitmq-cluster
-    deploy:
-      restart_policy:
-        condition: on-failure
+    container_name: springcloud-rabbitmq
     networks:
-      springcloud_net:
+      network:
         ipv4_address: 172.16.0.2
     environment:
       - RABBITMQ_ERLANG_COOKIE='secret cookie here'
 
+# ELK
+#Logstash 日志收集 input->filter->output
+#ElasticSearch 实时搜索分析引擎  使用反向索引,用分词将内容做索引
+#kibana 数据展示
+# http://172.16.0.3:9200 elastic/elastic
+  springcloud-elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
+    container_name: springcloud-elasticsearch
+    networks:
+      network:
+        ipv4_address: 172.16.0.3
+    environment:
+#    username: elastic
+      - ELASTIC_PASSWORD=elastic
+      - discovery.type=single-node
+
+# input-tcp -> output elasticsearch
+  springcloud-logstash:
+    image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION}
+    container_name: springcloud-logstash
+    networks:
+      network:
+        ipv4_address: 172.16.0.4
+#   /usr/share/logstash/pipeline/logstash.conf
+    volumes:
+      - ${PROJECT_HOME}/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+
+# 相对于logback同步日志到logstash,使用filebeat不会对应用造成任何修改,甚至还可以直接同步日志到elasticsearch,推荐使用这种无修改方式
+  springcloud-filebeat:
+    image: docker.elastic.co/beats/filebeat:${ELASTIC_VERSION}
+    container_name: springcloud-filebeat
+    networks:
+      network:
+        ipv4_address: 172.16.0.5
+    extra_hosts:
+      - "elasticsearch:172.16.0.3"
+      - "logstash:172.16.0.4"
+#      /usr/share/filebeat/prospectors.d/default.yml
+#  filebeat 跟应用应该在一个主机,这里只是为了方便演示,映射了日志文件
+    volumes:
+      - ${PROJECT_HOME}../logs/:/mnt/log/
+#      /usr/share/filebeat/filebeat.yml 默认是直接同步到elasticsearch
+
+# http://172.16.0.6:5601
+  springcloud-kibana:
+    image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}
+    container_name: springcloud-kibana
+    networks:
+      network:
+        ipv4_address: 172.16.0.6
+# /usr/share/kibana/config/kibana.yml
+    extra_hosts:
+      - "elasticsearch:172.16.0.3"
+    volumes:
+      - ${PROJECT_HOME}/kibana.yml:/usr/share/kibana/config/kibana.yml
+
 networks:
-  springcloud_net:
+  network:
+    name: springcloud_net
     driver: bridge
     ipam:
       driver: default
