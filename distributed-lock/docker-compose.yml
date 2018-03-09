@@ -1,0 +1,24 @@
+# 启动基础应用
+version: '3.5'
+services:
+#  数据库
+  springcloud-redis-lock:
+    image: redis:alpine
+    container_name: springcloud-redis-lock
+    networks:
+      network:
+        ipv4_address: 172.16.0.2
+
+networks:
+  network:
+    name: springcloud_net
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      -
+        subnet: 172.16.0.0/16
+#networks:
+#  default:
+#    external:
+#      name: springcloud_net

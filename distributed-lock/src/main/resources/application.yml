@@ -1,0 +1,3 @@
+redisson:
+# 必须要有"redis://"否则报"scheme name"错误
+  address: "redis://172.16.0.2:6379"
