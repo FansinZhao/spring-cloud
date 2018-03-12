@@ -11,4 +11,5 @@ spring:
 #spring:
 #  application:
 #    name: discovery-eureka-server-slave #多个服务分布式集群时修改不同名称
-
+info:
+  component: Discovery Server ${spring.profiles.active}

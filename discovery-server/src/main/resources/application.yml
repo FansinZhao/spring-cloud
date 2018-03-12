@@ -2,20 +2,52 @@
 ############# master ################
 spring:
   profiles:
-    active: master
+    active: local
+############# master ################
+#spring:
+#  profiles:
+#    active: master
 ############# slave ################
 #spring:
 #  profiles:
 #    active: slave
 #acturator info
-info:
-  component: Discovery Server ${spring.profiles.active}
 ############### 日志  ###############
 logging:
   file: logs/${spring.application.name}.log
   level:
     org.springframework.boot: info
     com.fansin.spring.cloud: debug
+    c.n.e.registry.AbstractInstanceRegistry: error
+# local
+---
+spring:
+  profiles: local
+server:
+  port: 8761
+peer:
+  server:
+    port: 8762 #slave的端口
+    hostname: 127.0.0.1 #slave 主机
+eureka:
+  instance:
+    hostname: 127.0.0.1
+    prefer-ip-address: true
+#   配合上面 'prefer-ip-address' ,具体参数查看 HostInfoEnvironmentPostProcessor
+    instance-id: ${spring.application.name}-${eureka.instance.hostname}:${server.port}
+#   期待下次心跳
+    lease-expiration-duration-in-seconds: 60
+#   超时移除客户端
+    lease-renewal-interval-in-seconds: 30
+
+  client:
+    serviceUrl:
+      defaultZone: http://${peer.server.hostname}:${peer.server.port}/eureka/ # 带目录
+  server:
+#   网络中断后自我保护
+    enable-self-preservation: true
+#   清理无效节点
+    eviction-interval-timer-in-ms: 60
 #多台服务统一配置,然后启动不同的profile即可,目前为2台
 --- #分割配置
 spring:
@@ -25,13 +57,13 @@ server:
 peer:
   server:
     port: 8762 #slave的端口
-    hostname: 127.0.0.1 #slave 主机
+    hostname: 172.16.0.3 #slave 主机
 eureka:
   instance:
-    hostname: localhost
+    hostname: 172.16.0.2
     prefer-ip-address: true
 #   配合上面 'prefer-ip-address' ,具体参数查看 HostInfoEnvironmentPostProcessor
-    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+    instance-id: ${spring.application.name}-${eureka.instance.hostname}:${server.port}
 #   期待下次心跳
     lease-expiration-duration-in-seconds: 60
 #   超时移除客户端
@@ -54,13 +86,13 @@ server:
 peer:
   server:
     port: 8761 #master端口
-    hostname: 127.0.0.1 #master主机
+    hostname: 172.16.0.2 #master主机
 eureka:
   instance:
-    hostname: localhost
+    hostname: 172.16.0.3
     prefer-ip-address: true
 #   配合上面 'prefer-ip-address' ,具体参数查看 HostInfoEnvironmentPostProcessor
-    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+    instance-id: ${spring.application.name}-${eureka.instance.hostname}:${server.port}
   client:
     serviceUrl:
       defaultZone: http://${peer.server.hostname}:${peer.server.port}/eureka/
