@@ -4,6 +4,18 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://172.16.0.6:3306/mybatis?charset=utf8
     username: root
+mybatis:
+  configuration:
+#   局部缓存 statement不会在对同一个SqlSession的两个不同调用之间共享数据 默认session
+    local-cache-scope: statement
+#   全局cache 二级缓存
+    cache-enabled: true
+#    驼峰转换
+    map-underscore-to-camel-case: true
+#    默认参数 null
+    jdbc-type-for-null: null
+#    使用别名
+    use-column-label: true
 #mybatis
 #####1 自动查找datasource #####
 #####2 自动注册SqlSessionFactoryBean #####
